@@ -32,7 +32,7 @@ class MenuGroupResource extends Resource
     {
         return $schema
             ->components([
-                DatePicker::make('name')
+                DatePicker::make('date')
                     ->label('Nama Kalkulasi')
                     ->required(),
 
@@ -70,7 +70,7 @@ class MenuGroupResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name')
+                TextColumn::make('date')
                     ->searchable(),
 
                 TextColumn::make('recipes_portions')

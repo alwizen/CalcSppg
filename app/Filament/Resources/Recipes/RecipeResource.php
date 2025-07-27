@@ -66,6 +66,8 @@ class RecipeResource extends Resource
                             ->label('Bahan Baku')
                             ->relationship('ingredient', 'name')
                             ->required()
+                            ->searchable()
+                            ->preload()
                             ->live()
                             ->afterStateUpdated(function ($state, callable $set) {
                                 $unit = \App\Models\Ingredient::find($state)?->unit;
@@ -115,6 +117,7 @@ class RecipeResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->defaultPaginationPageOption(50)
             ->columns([
                 TextColumn::make('name')
                     ->label('Nama Menu')
