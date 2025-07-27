@@ -45,10 +45,12 @@ class MenuGroupResource extends Resource
             ->components([
                 DatePicker::make('date')
                     ->label('Nama Kalkulasi')
-                    ->required(),
+                    ->required()
+                    ->columnSpanFull(),
 
                 Repeater::make('recipes')
                     ->relationship()
+                    ->columnSpanFull()
                     ->schema([
                         Select::make('recipe_id')
                             ->label('Resep')
