@@ -32,6 +32,8 @@ class RecipeCalculationResource extends Resource
 
     protected static ?string $navigationLabel = 'Hitung Resep';
 
+    protected static bool $shouldRegisterNavigation = false;
+
     public static function getNavigationBadge(): ?string
     {
         return "v.1";

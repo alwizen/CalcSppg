@@ -34,10 +34,10 @@ class MenuGroupResource extends Resource
 
     protected static ?string $label = "Hitung Kebutuhan Dapur";
 
-    // public static function getNavigationBadge(): ?string
-    // {
-    //     return "✨";
-    // }
+    public static function getNavigationBadge(): ?string
+    {
+        return "✨";
+    }
 
     public static function form(Schema $schema): Schema
     {
