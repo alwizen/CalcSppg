@@ -34,6 +34,10 @@ class RecipeResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = "Master Data";
 
+    protected static ?int $navigationSort = 0;
+
+    protected static ?string $label = "Daftar Menu";
+
     protected static ?string $navigationLabel = "Menu Masakan";
 
     public static function form(Schema $schema): Schema
@@ -82,7 +86,7 @@ class RecipeResource extends Resource
                         TextInput::make('amount')
                             ->label('Jumlah')
                             ->numeric()
-                            ->step(0.01)
+                            ->step(0.00001)
                             ->required(),
                     ])
                     ->columnSpanFull()

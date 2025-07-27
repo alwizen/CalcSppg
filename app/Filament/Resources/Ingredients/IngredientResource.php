@@ -29,6 +29,8 @@ class IngredientResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = "Master Data";
 
+    protected static ?int $navigationSort = 1;
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::Bars3BottomLeft;
 
     public static function form(Schema $schema): Schema
@@ -60,8 +62,10 @@ class IngredientResource extends Resource
             ->defaultPaginationPageOption(50)
             ->columns([
                 TextColumn::make('name')
-                    ->searchable(),
+                    ->searchable()
+                    ->label('Nama Bahan'),
                 TextColumn::make('unit')
+                    ->label('Satuan')
                     ->searchable(),
                 TextColumn::make('created_at')
                     ->dateTime()

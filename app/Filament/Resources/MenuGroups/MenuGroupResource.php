@@ -5,6 +5,8 @@ namespace App\Filament\Resources\MenuGroups;
 use App\Filament\Resources\MenuGroups\Pages\ManageMenuGroups;
 use App\Models\MenuGroup;
 use BackedEnum;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -26,7 +28,11 @@ class MenuGroupResource extends Resource
 {
     protected static ?string $model = MenuGroup::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCalculator;
+
+    protected static ?string $navigationLabel = "Hitung Kebutuhan";
+
+    protected static ?string $label = "Hitung Kebutuhan Dapur";
 
     public static function form(Schema $schema): Schema
     {
@@ -71,8 +77,9 @@ class MenuGroupResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('date')
-                    ->searchable(),
-
+                    ->searchable()
+                    ->label('Tanggal')
+                    ->date(),
                 TextColumn::make('recipes_portions')
                     ->label('Menu')
                     ->listWithLineBreaks()
@@ -91,24 +98,6 @@ class MenuGroupResource extends Resource
                         })->toArray();
                     }),
 
-                // TextColumn::make('ingredients_summary')
-                //     ->label('Bahan')
-                //     ->listWithLineBreaks()
-                //     ->getStateUsing(function ($record) {
-                //         return $record->recipes->flatMap(function ($menuRecipe) {
-                //             $recipe = $menuRecipe->recipe;
-                //             $multiplier = $menuRecipe->requested_portions / $recipe->base_portions;
-
-                //             return $recipe->recipeIngredients->map(function ($ri) use ($multiplier) {
-                //                 $ingredient = $ri->ingredient;
-                //                 $amount = round($ri->amount * $multiplier, 2);
-                //                 return "{$ingredient->name}: {$amount} {$ingredient->unit}";
-                //             });
-                //         })->toArray();
-                //     }),
-
-
-
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -122,9 +111,22 @@ class MenuGroupResource extends Resource
                 //
             ])
             ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
-                DeleteAction::make(),
+                ActionGroup::make([
+                    ViewAction::make(),
+                    EditAction::make(),
+                    DeleteAction::make(),
+                    Action::make('print_pdf')
+                        ->label('Cetak PDF')
+                        ->icon('heroicon-o-printer')
+                        ->url(fn($record) => route('menu-group.print', $record))
+                        ->openUrlInNewTab(),
+                    Action::make('export_excel')
+                        ->label('Export Excel')
+                        ->icon('heroicon-o-arrow-down-tray')
+                        ->url(fn($record) => route('menu-group.export', $record))
+                        ->openUrlInNewTab(),
+                ])->button()
+                    ->label('More Action')
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

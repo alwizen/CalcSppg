@@ -9,6 +9,11 @@ class MenuGroup extends Model
 {
     protected $fillable = ['date'];
 
+    protected $casts = [
+        'date' => 'datetime',
+    ];
+
+
     public function recipes(): HasMany
     {
         return $this->hasMany(MenuGroupRecipe::class);

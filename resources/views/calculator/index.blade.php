@@ -66,24 +66,47 @@
         </div>
 
         <!-- Hasil Perhitungan -->
-        <div id="results" class="hidden max-w-4xl mx-auto bg-white rounded-2xl shadow-lg p-8">
+        <div id="results" class="hidden max-w-5xl mx-auto bg-white rounded-2xl shadow-lg p-8">
             <div class="text-center mb-6">
                 <h2 class="text-2xl font-bold text-gray-800 mb-2">Hasil Perhitungan</h2>
-                <div id="recipeInfo" class="bg-orange-50 rounded-lg p-4 inline-block">
-                    <!-- Info resep akan diisi oleh JavaScript -->
-                </div>
             </div>
 
             <div class="mb-6">
                 <h3 class="text-xl font-semibold text-gray-800 mb-4">Bahan yang Dibutuhkan :</h3>
-                <div id="ingredientsList" class="grid md:grid-cols-2 gap-4">
-                    <!-- Daftar bahan akan diisi oleh JavaScript -->
+
+                <!-- Tabel Bahan -->
+                <div class="overflow-x-auto">
+                    <table class="w-full border-collapse bg-white rounded-lg overflow-hidden shadow-sm">
+                        <thead>
+                            <tr class="bg-gradient-to-r from-blue-500 to-blue-600 text-white">
+                                <th
+                                    class="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider border-b-2 border-blue-700">
+                                    No
+                                </th>
+                                <th
+                                    class="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider border-b-2 border-blue-700">
+                                    Nama Bahan
+                                </th>
+                                <th
+                                    class="px-6 py-4 text-right text-sm font-semibold uppercase tracking-wider border-b-2 border-blue-700">
+                                    Jumlah
+                                </th>
+                                <th
+                                    class="px-6 py-4 text-center text-sm font-semibold uppercase tracking-wider border-b-2 border-blue-700">
+                                    Satuan
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="ingredientsTable">
+                            <!-- Data akan diisi oleh JavaScript -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
-            <div class="bg-blue-50 rounded-lg p-4 text-center">
-                <p class="text-blue-800">
-                    💡 <strong>Catatan:</strong> Hasil perhitungan ini berdasarkan standard Oprational.
+            <div class="bg-orange-50 rounded-lg p-4 text-center">
+                <p class="text-red-800">
+                    <strong>Catatan:</strong> Hasil perhitungan ini berdasarkan standard Oprational.
                 </p>
             </div>
         </div>
@@ -152,32 +175,57 @@
             }
         });
 
-        function displayResults(data) {
-            // Update recipe info
-            const recipeInfo = document.getElementById('recipeInfo');
-            recipeInfo.innerHTML = `
-                <div class="grid md:grid-cols-2 gap-4 text-sm">
-                    <div>
-                        <div class="text-gray-600">Menu Dipilih</div>
-                        <div class="font-semibold text-orange-800">${data.recipe_name}</div>
-                    </div>
-                    <div>
-                        <div class="text-gray-600">Porsi Diminta</div>
-                        <div class="font-semibold text-orange-800">${data.requested_portions}</div>
-                    </div>
-                    
-                </div>
-            `;
+        function formatAmount(amount) {
+            const num = parseFloat(amount);
 
-            // Update ingredients list
-            const ingredientsList = document.getElementById('ingredientsList');
-            ingredientsList.innerHTML = data.ingredients.map(ingredient => `
-                <div class="bg-gray-50 rounded-lg p-4 flex justify-between items-center hover:bg-gray-100 transition-colors">
-                    <span class="font-medium text-gray-700">${ingredient.name}</span>
-                    <span class="text-xl font-bold text-orange-600">
-                        ${ingredient.calculated_amount} ${ingredient.unit}
-                    </span>
-                </div>
+            // Jika angka 0, tampilkan 0
+            if (num === 0) {
+                return '0';
+            }
+
+            // Jika angka bulat, tampilkan tanpa desimal
+            if (num % 1 === 0) {
+                return num.toString();
+            }
+
+            // Untuk angka desimal, tentukan jumlah digit desimal berdasarkan ukuran angka
+            let formatted;
+            if (num < 0.0001) {
+                // Untuk angka sangat kecil, gunakan presisi tinggi
+                formatted = num.toFixed(8);
+            } else if (num < 0.001) {
+                formatted = num.toFixed(6);
+            } else if (num < 0.01) {
+                formatted = num.toFixed(5);
+            } else if (num < 0.1) {
+                formatted = num.toFixed(4);
+            } else if (num < 1) {
+                formatted = num.toFixed(3);
+            } else {
+                formatted = num.toFixed(2);
+            }
+
+            return formatted.replace(/\.?0+$/, '');
+        }
+
+        function displayResults(data) {
+            // Update ingredients table
+            const ingredientsTable = document.getElementById('ingredientsTable');
+            ingredientsTable.innerHTML = data.ingredients.map((ingredient, index) => `
+                <tr class="${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'} hover:bg-blue-50 transition-colors">
+                    <td class="px-6 py-4 text-sm text-gray-900 font-medium border-b border-gray-200">
+                        ${index + 1}
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-900 border-b border-gray-200">
+                        ${ingredient.name}
+                    </td>
+                    <td class="px-6 py-4 text-sm text-right font-bold text-black-600 border-b border-gray-200">
+                        ${ingredient.calculated_amount}
+                    </td>
+                    <td class="px-6 py-4 text-sm text-center text-gray-700 border-b border-gray-200">
+                        ${ingredient.unit}
+                    </td>
+                </tr>
             `).join('');
 
             // Show results

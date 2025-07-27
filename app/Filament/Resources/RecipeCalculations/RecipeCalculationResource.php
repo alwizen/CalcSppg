@@ -28,7 +28,7 @@ class RecipeCalculationResource extends Resource
 {
     protected static ?string $model = RecipeCalculation::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCalculator;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCube;
 
     protected static ?string $navigationLabel = 'Hitung Resep';
 
