@@ -13,7 +13,7 @@
     <div class="container mx-auto px-4 py-8">
         <!-- Header -->
         <div class="text-center mb-8">
-            <h1 class="text-4xl font-bold text-gray-800 mb-2">🍳 Kalkulator Dapur SPPG</h1>
+            <h1 class="text-4xl font-bold text-gray-800 mb-2">🧮 Kalkulator Dapur SPPG</h1>
             <p class="text-gray-600">Hitung bahan masakan untuk porsi yang diinginkan</p>
         </div>
 
@@ -52,7 +52,7 @@
                 <!-- Tombol Hitung -->
                 <div class="text-center">
                     <button type="submit"
-                        class="bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-yellow-600 text-white font-bold py-4 px-8 rounded-xl text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
+                        class="bg-gradient-to-r from-blue-500 to-blue-800 hover:from-blue-800 hover:to-blue-400 text-white font-bold py-4 px-8 rounded-xl text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
                         Hitung Bahan
                     </button>
                 </div>
@@ -68,14 +68,14 @@
         <!-- Hasil Perhitungan -->
         <div id="results" class="hidden max-w-4xl mx-auto bg-white rounded-2xl shadow-lg p-8">
             <div class="text-center mb-6">
-                <h2 class="text-2xl font-bold text-gray-800 mb-2">📊 Hasil Perhitungan</h2>
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">Hasil Perhitungan</h2>
                 <div id="recipeInfo" class="bg-orange-50 rounded-lg p-4 inline-block">
                     <!-- Info resep akan diisi oleh JavaScript -->
                 </div>
             </div>
 
             <div class="mb-6">
-                <h3 class="text-xl font-semibold text-gray-800 mb-4">🛒 Daftar Bahan yang Dibutuhkan:</h3>
+                <h3 class="text-xl font-semibold text-gray-800 mb-4">Bahan yang Dibutuhkan :</h3>
                 <div id="ingredientsList" class="grid md:grid-cols-2 gap-4">
                     <!-- Daftar bahan akan diisi oleh JavaScript -->
                 </div>
@@ -96,8 +96,8 @@
 
         <!-- Admin Link -->
         <div class="text-center mt-12">
-            <a href="/admin" class="inline-flex items-center text-gray-600 hover:text-orange-600 transition-colors">
-                ⚙️ Panel Admin untuk Kelola Resep
+            <a href="#" class="inline-flex items-center text-gray-600 hover:text-orange-600 transition-colors">
+                Made With ❤️ <b> Solu8i Project</b>
             </a>
         </div>
     </div>

@@ -12,8 +12,15 @@ class Ingredient extends Model
         'unit'
     ];
 
-    public function menus(): BelongsTo
+    public function recipeIngredients()
     {
-        return $this->belongsTo(RecipeIngredient::class);
+        return $this->hasMany(RecipeIngredient::class);
+    }
+
+    public function recipes()
+    {
+        return $this->belongsToMany(Recipe::class, 'recipe_ingredients')
+            ->withPivot('amount')
+            ->withTimestamps();
     }
 }

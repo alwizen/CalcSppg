@@ -23,10 +23,6 @@ class Recipe extends Model
         'is_active' => 'boolean',
     ];
 
-    public function ingredients(): HasMany
-    {
-        return $this->hasMany(RecipeIngredient::class);
-    }
 
     protected static function boot()
     {
@@ -35,5 +31,17 @@ class Recipe extends Model
         static::creating(function ($recipe) {
             $recipe->slug = Str::slug($recipe->name);
         });
+    }
+
+    public function recipeIngredients(): HasMany
+    {
+        return $this->hasMany(RecipeIngredient::class);
+    }
+
+    public function ingredients()
+    {
+        return $this->belongsToMany(Ingredient::class, 'recipe_ingredients')
+            ->withPivot('amount')
+            ->withTimestamps();
     }
 }

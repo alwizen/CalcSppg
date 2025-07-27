@@ -3,17 +3,17 @@
 namespace App\Filament\Resources\Recipes\Pages;
 
 use App\Filament\Resources\Recipes\RecipeResource;
-use Filament\Actions\EditAction;
-use Filament\Resources\Pages\ViewRecord;
+use Filament\Actions\CreateAction;
+use Filament\Resources\Pages\ManageRecords;
 
-class ViewRecipe extends ViewRecord
+class ManageRecipes extends ManageRecords
 {
     protected static string $resource = RecipeResource::class;
 
     protected function getHeaderActions(): array
     {
         return [
-            EditAction::make(),
+            CreateAction::make(),
         ];
     }
 }

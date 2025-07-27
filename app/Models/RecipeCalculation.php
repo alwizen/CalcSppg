@@ -4,13 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class RecipeIngredient extends Model
+class RecipeCalculation extends Model
 {
     protected $fillable = [
         'recipe_id',
-        'ingredient_id',
-        'amount'
+        'requested_portions'
     ];
 
     public function recipe(): BelongsTo
@@ -18,8 +18,8 @@ class RecipeIngredient extends Model
         return $this->belongsTo(Recipe::class);
     }
 
-    public function ingredient(): BelongsTo
+    public function calculatedIngredients(): HasMany
     {
-        return $this->belongsTo(Ingredient::class);
+        return $this->hasMany(RecipeCalculationIngredient::class);
     }
 }

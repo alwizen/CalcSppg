@@ -17,6 +17,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class IngredientResource extends Resource
 {
@@ -24,7 +25,11 @@ class IngredientResource extends Resource
 
     protected static ?string $navigationLabel = "Bahan Baku";
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static ?string $label = "Bahan Baku";
+
+    protected static string|UnitEnum|null $navigationGroup = "Master Data";
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::Bars3BottomLeft;
 
     public static function form(Schema $schema): Schema
     {

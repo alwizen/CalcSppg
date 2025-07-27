@@ -24,21 +24,21 @@ class CalculatorController extends Controller
             'portions' => 'required|numeric|min:1'
         ]);
 
-        $recipe = Recipe::with('ingredients')->findOrFail($request->recipe_id);
+        $recipe = Recipe::with('recipeIngredients.ingredient')->findOrFail($request->recipe_id);
         $multiplier = $request->portions / $recipe->base_portions;
 
-        $calculatedIngredients = $recipe->ingredients->map(function ($ingredient) use ($multiplier) {
+        $calculatedIngredients = $recipe->recipeIngredients->map(function ($ri) use ($multiplier) {
             return [
-                'name' => $ingredient->name,
-                'original_amount' => $ingredient->amount,
-                'calculated_amount' => round($ingredient->amount * $multiplier, 2),
-                'unit' => $ingredient->unit
+                'name' => $ri->ingredient->name,
+                'original_amount' => $ri->amount,
+                'calculated_amount' => round($ri->amount * $multiplier, 2),
+                'unit' => $ri->ingredient->unit,
             ];
         });
 
         return response()->json([
             'recipe_name' => $recipe->name,
-            'requested_portions' => $request->portions,
+            'requested_portions' => (int) $request->portions,
             'base_portions' => $recipe->base_portions,
             'multiplier' => round($multiplier, 2),
             'ingredients' => $calculatedIngredients

@@ -27,9 +27,12 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
+            ->brandName('SPPG Calk')
+            ->brandLogo(asset('img/bgn.png'))
+            ->brandLogoHeight('3rem')
             ->login()
             ->colors([
-                'primary' => Color::BlueDark,
+                'primary' => Color::Red,
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')

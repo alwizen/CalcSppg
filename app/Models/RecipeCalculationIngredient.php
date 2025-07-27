@@ -5,17 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class RecipeIngredient extends Model
+class RecipeCalculationIngredient extends Model
 {
     protected $fillable = [
-        'recipe_id',
+        'recipe_calculation_id',
         'ingredient_id',
-        'amount'
+        'calculated_amount',
+        'unit'
     ];
 
-    public function recipe(): BelongsTo
+    public function recipeCalculation(): BelongsTo
     {
-        return $this->belongsTo(Recipe::class);
+        return $this->belongsTo(RecipeCalculation::class);
     }
 
     public function ingredient(): BelongsTo
