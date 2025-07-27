@@ -40,6 +40,11 @@ class RecipeResource extends Resource
 
     protected static ?string $navigationLabel = "Menu Masakan";
 
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
+
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -51,9 +56,9 @@ class RecipeResource extends Resource
 
                 TextInput::make('base_portions')
                     ->label('Porsi Dasar')
-                    ->readOnly()
+                    // ->readOnly()
                     ->numeric()
-                    ->default(1)
+                    // ->default(1)
                     ->required(),
 
                 Toggle::make('is_active')

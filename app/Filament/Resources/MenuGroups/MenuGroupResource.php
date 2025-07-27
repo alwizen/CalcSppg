@@ -34,6 +34,11 @@ class MenuGroupResource extends Resource
 
     protected static ?string $label = "Hitung Kebutuhan Dapur";
 
+    // public static function getNavigationBadge(): ?string
+    // {
+    //     return "✨";
+    // }
+
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -75,13 +80,14 @@ class MenuGroupResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->defaultSort('date', 'desc')
             ->columns([
                 TextColumn::make('date')
                     ->searchable()
                     ->label('Tanggal')
                     ->date(),
                 TextColumn::make('recipes_portions')
-                    ->label('Menu')
+                    ->label('Nama Menu')
                     ->listWithLineBreaks()
                     ->getStateUsing(function ($record) {
                         return $record->recipes->map(function ($menuRecipe) {
@@ -113,8 +119,6 @@ class MenuGroupResource extends Resource
             ->recordActions([
                 ActionGroup::make([
                     ViewAction::make(),
-                    EditAction::make(),
-                    DeleteAction::make(),
                     Action::make('print_pdf')
                         ->label('Cetak PDF')
                         ->icon('heroicon-o-printer')
@@ -125,8 +129,16 @@ class MenuGroupResource extends Resource
                         ->icon('heroicon-o-arrow-down-tray')
                         ->url(fn($record) => route('menu-group.export', $record))
                         ->openUrlInNewTab(),
-                ])->button()
-                    ->label('More Action')
+                ])
+                    ->button()
+                    ->label('Tindakan')
+                    ->icon(Heroicon::PaperClip),
+                EditAction::make()
+                    ->label('')
+                    ->tooltip('Ubah'),
+                DeleteAction::make()
+                    ->label('')
+                    ->tooltip('Hapus'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

@@ -5,6 +5,7 @@ namespace App\Filament\Resources\MenuGroups\Pages;
 use App\Filament\Resources\MenuGroups\MenuGroupResource;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ManageRecords;
+use Filament\Support\Icons\Heroicon;
 
 class ManageMenuGroups extends ManageRecords
 {
@@ -13,7 +14,9 @@ class ManageMenuGroups extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            CreateAction::make()
+                ->label('Hitung Kebutuhan')
+                ->icon(Heroicon::OutlinedCalculator),
         ];
     }
 }
