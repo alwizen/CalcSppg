@@ -8,6 +8,7 @@ use BackedEnum;
 use Dom\Text;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -24,6 +25,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Collection;
 
 class MenuGroupResource extends Resource
 {
@@ -37,7 +39,7 @@ class MenuGroupResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return "✨";
+        return "🧮";
     }
 
     public static function form(Schema $schema): Schema
@@ -155,6 +157,32 @@ class MenuGroupResource extends Resource
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
+                    // Bulk Export Excel Action
+                    BulkAction::make('bulk_export_excel')
+                        ->label('Export Excel')
+                        ->icon('heroicon-o-arrow-down-tray')
+                        ->color('success')
+                        ->action(function (Collection $records) {
+                            $ids = $records->pluck('id')->toArray();
+                            $url = route('menu-group.bulk-export', ['ids' => implode(',', $ids)]);
+
+                            // Redirect to download URL
+                            return redirect($url);
+                        })
+                        ->deselectRecordsAfterCompletion(),
+                    BulkAction::make('bulk_export_pdf')
+                        ->label('Export PDF')
+                        ->icon('heroicon-o-printer')
+                        ->color('danger')
+                        ->action(function (Collection $records) {
+                            $ids = $records->pluck('id')->toArray();
+                            $url = route('menu-group.bulk-print', ['ids' => implode(',', $ids)]);
+
+                            // Redirect to download URL
+                            return redirect($url);
+                        })
+                        ->deselectRecordsAfterCompletion(),
+
                 ]),
             ]);
     }

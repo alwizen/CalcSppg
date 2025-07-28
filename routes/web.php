@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CalculatorController;
+use App\Http\Controllers\MenuGroupController;
 use App\Http\Controllers\MenuGroupExcelController;
 use App\Http\Controllers\MenuGroupPdfController;
 use App\Http\Controllers\RecipeCalculationPdfController;
@@ -17,6 +18,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/recipe-calculation/{recipeCalculation}/preview', [RecipeCalculationPdfController::class, 'previewPdf'])
         ->name('recipe-calculation.preview');
 });
+
+Route::get('/menu-group/bulk-export', [MenuGroupController::class, 'bulkExport'])
+    ->name('menu-group.bulk-export');
+Route::get('/menu-group/bulk-print', [MenuGroupController::class, 'bulkPrint'])
+    ->name('menu-group.bulk-print');
 
 Route::get('/menu-groups/{menuGroup}/export', [MenuGroupExcelController::class, 'export'])->name('menu-group.export');
 
