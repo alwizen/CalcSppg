@@ -4,31 +4,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kalkulator Dapur</title>
+    <title>Kalkulasi Dapur</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 
-<body class="bg-gradient-to-br from-green-50 to-red-50 min-h-screen">
+<body class="min-h-screen relative" style="background-image: url('/img/bg.pn'); background-size: contain; background-position: center; background-repeat: no-repeat; background-attachment: fixed;">
+    <!-- Overlay untuk meredam background -->
+    <div class="absolute inset-0 bg-white/70 backdrop-blur-[1px]"></div>
+    
+    <!-- Content -->
+    <div class="relative z-10">
+    <!-- Navbar -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50 mb-8">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <!-- Logo/Brand -->
+                <div class="flex items-center space-x-3">
+                    <h1 class="text-2xl md:text-3xl font-bold text-gray-800">
+                        🧮 
+                    </h1>
+                </div>
+
+                <!-- Desktop Login Button -->
+                <div class="hidden md:block">
+                    <a href="/admin" 
+                       class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition-all duration-200">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
+                        <span class="hidden lg:inline">Login Admin</span>
+                        <span class="lg:hidden">Admin</span>
+                    </a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden">
+                    <button id="mobileMenuBtn" class="text-gray-700 hover:text-indigo-600 focus:outline-none">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Menu -->
+            <div id="mobileMenu" class="hidden md:hidden pb-4">
+                <div class="border-t border-gray-200 pt-4">
+                    <a href="/admin" 
+                       class="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-lg shadow-md transition-all duration-200 w-full">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
+                        Login Admin
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
     <div class="container mx-auto px-4 py-8">
-        <!-- Header -->
+        <!-- Header Subtitle -->
         <div class="text-center mb-8">
-            <h1 class="text-4xl font-bold text-gray-800 mb-2">🧮 Kalkulator Dapur SPPG</h1>
-            <p class="text-gray-600">Hitung bahan masakan untuk porsi yang diinginkan</p>
+            <p class="text-gray-600 text-lg">Hitung bahan masakan untuk porsi yang diinginkan</p>
         </div>
 
         <!-- Form Kalkulator -->
-        <div class="max-w-2xl mx-auto bg-white rounded-2xl shadow-lg p-8 mb-8">
-            <form id="calculatorForm" class="space-y-6">
+        <div class="max-w-lg mx-auto bg-white/95 backdrop-blur-md rounded-lg shadow-lg border border-white/20 p-6 mb-8">
+            <form id="calculatorForm" class="space-y-4">
                 @csrf
 
                 <!-- Pilih Menu -->
                 <div>
-                    <label for="recipe_id" class="block text-sm font-semibold text-gray-700 mb-3">
+                    <label for="recipe_id" class="block text-sm font-medium text-gray-700 mb-2">
                         Nama Menu
                     </label>
                     <select name="recipe_id" id="recipe_id" required
-                        class="w-full px-4 py-3 text-lg border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-orange-200 focus:border-orange-500 transition-all">
+                        class="w-full px-3 py-2 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
                         <option value="">-- Pilih Menu Masakan --</option>
                         @foreach ($recipes as $recipe)
                             <option value="{{ $recipe->id }}" data-base-portions="{{ $recipe->base_portions }}">
@@ -41,18 +93,18 @@
 
                 <!-- Input Jumlah Porsi -->
                 <div>
-                    <label for="portions" class="block text-sm font-semibold text-gray-700 mb-3">
+                    <label for="portions" class="block text-sm font-medium text-gray-700 mb-2">
                         Jumlah Porsi yang Diinginkan
                     </label>
                     <input type="number" name="portions" id="portions" min="1" step="1" required
                         placeholder="Contoh: 100"
-                        class="w-full px-4 py-3 text-lg border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-orange-200 focus:border-orange-500 transition-all">
+                        class="w-full px-3 py-2 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
                 </div>
 
                 <!-- Tombol Hitung -->
-                <div class="text-center">
+                <div class="text-center pt-2">
                     <button type="submit"
-                        class="bg-gradient-to-r from-blue-500 to-blue-800 hover:from-blue-800 hover:to-blue-400 text-white font-bold py-4 px-8 rounded-xl text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
+                        class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-200">
                         Hitung Bahan
                     </button>
                 </div>
@@ -66,13 +118,13 @@
         </div>
 
         <!-- Hasil Perhitungan -->
-        <div id="results" class="hidden max-w-5xl mx-auto bg-white rounded-2xl shadow-lg p-8">
-            <div class="text-center mb-6">
-                <h2 class="text-2xl font-bold text-gray-800 mb-2">Hasil Perhitungan</h2>
+        <div id="results" class="hidden max-w-4xl mx-auto bg-white/95 backdrop-blur-md rounded-lg shadow-lg border border-white/20 p-6">
+            <div class="text-center mb-4">
+                <h2 class="text-xl font-semibold text-gray-800 mb-2">Hasil Perhitungan</h2>
             </div>
 
-            <div class="mb-6">
-                <h3 class="text-xl font-semibold text-gray-800 mb-4">Bahan yang Dibutuhkan :</h3>
+            <div class="mb-4">
+                <h3 class="text-lg font-medium text-gray-800 mb-3">Bahan yang Dibutuhkan :</h3>
 
                 <!-- Tabel Bahan -->
                 <div class="overflow-x-auto">
@@ -104,8 +156,8 @@
                 </div>
             </div>
 
-            <div class="bg-orange-50 rounded-lg p-4 text-center">
-                <p class="text-red-800">
+            <div class="bg-orange-50/80 backdrop-blur-sm rounded-lg p-3 text-center">
+                <p class="text-red-800 text-sm">
                     <strong>Catatan:</strong> Hasil perhitungan ini berdasarkan standard Oprational.
                 </p>
             </div>
@@ -113,19 +165,19 @@
 
         <!-- Error Message -->
         <div id="errorMessage"
-            class="hidden max-w-2xl mx-auto bg-red-50 border border-red-200 rounded-lg p-4 text-center">
-            <p class="text-red-800"></p>
+            class="hidden max-w-lg mx-auto bg-red-50/90 backdrop-blur-sm border border-red-200 rounded-lg p-3 text-center">
+            <p class="text-red-800 text-sm"></p>
         </div>
 
         <!-- Admin Link -->
         <div class="text-center mt-12">
             <a href="#" class="inline-flex items-center text-gray-600 hover:text-orange-600 transition-colors">
-                Made With ❤️ <b> Solu8i Project</b>
+                Made With ❤️ <b> RBJCorp.id</b>
             </a>
         </div>
     </div>
-
-    <script>
+</body>
+<script>
         // Setup CSRF token untuk AJAX
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
@@ -174,7 +226,9 @@
                 document.getElementById('loading').classList.add('hidden');
             }
         });
-
+    </script>
+</body>
+<script>
         function formatAmount(amount) {
             const num = parseFloat(amount);
 
@@ -251,6 +305,22 @@
 
         // Auto focus pada form pertama kali load
         document.getElementById('recipe_id').focus();
+
+        // Mobile menu toggle
+        document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(e) {
+            const mobileMenu = document.getElementById('mobileMenu');
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            
+            if (!mobileMenu.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+                mobileMenu.classList.add('hidden');
+            }
+        });
     </script>
 </body>
 
