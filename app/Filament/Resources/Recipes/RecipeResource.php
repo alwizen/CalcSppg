@@ -82,16 +82,16 @@ class RecipeResource extends Resource
                                 $unit = \App\Models\Ingredient::find($state)?->unit;
                                 $set('unit', $unit);
                             }),
-                        TextInput::make('unit')
-                            ->label('Satuan')
-                            ->disabled()
-                            ->dehydrated(false)
-                            ->required(),
-
                         TextInput::make('amount')
                             ->label('Jumlah')
                             ->numeric()
                             ->step(0.00001)
+                            ->required(),
+
+                        TextInput::make('unit')
+                            ->label('Satuan')
+                            ->disabled()
+                            ->dehydrated(false)
                             ->required(),
                     ])
                     ->columnSpanFull()

@@ -13,7 +13,9 @@ return new class extends Migration
     {
         Schema::create('menu_groups', function (Blueprint $table) {
             $table->id();
-            $table->date('date'); // Nama entri kalkulasi
+            $table->date('date');
+            $table->string('name');
+            $table->foreignId('sppg_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }

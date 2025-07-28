@@ -28,12 +28,13 @@
 <body>
     <h2>Kalkulasi Kebutuhan Bahan</h2>
     <p><strong>Tanggal:</strong> {{ $menuGroup->date->format('d-m-Y') }}</p>
+    <p><strong>Nama Perhitungan:</strong> {{ $menuGroup->name}}</p>
+    <p><strong>Nama SPPG:</strong> {{ $menuGroup->sppg?->name ?? 'Belum dipilih' }}</p>
 
     <table>
         <thead>
             <tr>
-                <th>No</th>
-                <th>Nama</th>
+                <th>Nama Menu</th>
                 <th>Porsi</th>
                 <th>Bahan-bahan</th>
                 <th>Jumlah</th>
@@ -41,32 +42,48 @@
             </tr>
         </thead>
         <tbody>
-            @php $no = 1; @endphp
-            @foreach ($menuGroup->recipes as $menuRecipe)
-                @php
+            @php
+                // Collect all ingredients grouped by ingredient name
+                $ingredientGroups = [];
+                $menuNames = [];
+                
+                foreach ($menuGroup->recipes as $menuRecipe) {
                     $recipe = $menuRecipe->recipe;
                     $multiplier = $menuRecipe->requested_portions / $recipe->base_portions;
-                    $ingredients = $recipe->recipeIngredients;
-                    $rowspan = count($ingredients);
-                @endphp
-
-                @foreach ($ingredients as $index => $ri)
-                    @php
+                    $menuNames[] = $recipe->name;
+                    
+                    foreach ($recipe->recipeIngredients as $ri) {
                         $ingredient = $ri->ingredient;
                         $amount = $ri->amount * $multiplier;
-                    @endphp
-                    <tr>
-                        @if ($index === 0)
-                            <td rowspan="{{ $rowspan }}">{{ $no++ }}</td>
-                            <td rowspan="{{ $rowspan }}">{{ $recipe->name }}</td>
-                            <td rowspan="{{ $rowspan }}">{{ $menuRecipe->requested_portions }}</td>
-                        @endif
-                        <td>{{ $ingredient->name }}</td>
-                        <td>{{ rtrim(rtrim(number_format($amount, 4, '.', ''), '0'), '.') }}</td>
-                        {{-- <td>{{ number_format($amount, 4) }}</td> --}}
-                        <td>{{ $ingredient->unit }}</td>
-                    </tr>
-                @endforeach
+                        $key = $ingredient->name;
+                        
+                        if (!isset($ingredientGroups[$key])) {
+                            $ingredientGroups[$key] = [
+                                'name' => $ingredient->name,
+                                'unit' => $ingredient->unit,
+                                'total_amount' => 0
+                            ];
+                        }
+                        
+                        $ingredientGroups[$key]['total_amount'] += $amount;
+                    }
+                }
+                
+                $menuNamesString = implode(', ', $menuNames);
+                $totalPortions = $menuGroup->recipes->sum('requested_portions');
+                $rowspan = count($ingredientGroups);
+            @endphp
+
+            @foreach ($ingredientGroups as $index => $ingredientData)
+                <tr>
+                    @if ($index === 0 || $loop->first)
+                        <td rowspan="{{ $rowspan }}">{{ $menuNamesString }}</td>
+                        <td rowspan="{{ $rowspan }}">{{ $totalPortions }}</td>
+                    @endif
+                    <td>{{ $ingredientData['name'] }}</td>
+                    <td>{{ rtrim(rtrim(number_format($ingredientData['total_amount'], 4, '.', ''), '0'), '.') }}</td>
+                    <td>{{ $ingredientData['unit'] }}</td>
+                </tr>
             @endforeach
         </tbody>
     </table>

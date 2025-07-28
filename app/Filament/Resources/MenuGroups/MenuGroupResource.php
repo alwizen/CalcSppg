@@ -5,6 +5,7 @@ namespace App\Filament\Resources\MenuGroups;
 use App\Filament\Resources\MenuGroups\Pages\ManageMenuGroups;
 use App\Models\MenuGroup;
 use BackedEnum;
+use Dom\Text;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
@@ -46,14 +47,23 @@ class MenuGroupResource extends Resource
                 DatePicker::make('date')
                     ->label('Nama Kalkulasi')
                     ->required()
-                    ->columnSpanFull(),
+                    ->default(now()),
+
+                TextInput::make('name')
+                    ->label('Nama Menu')
+                    ->required()
+                    ->placeholder('Menu Hari ke'),
+
+                Select::make('sppg_id')
+                    ->relationship('sppg', 'name')
+                    ->label('Nama SPPG'),
 
                 Repeater::make('recipes')
                     ->relationship()
                     ->columnSpanFull()
                     ->schema([
                         Select::make('recipe_id')
-                            ->label('Resep')
+                            ->label('Menu Masakan')
                             ->relationship('recipe', 'name')
                             ->required(),
 
@@ -65,7 +75,7 @@ class MenuGroupResource extends Resource
                     ->label('Daftar Resep')
                     ->columns(2)
                     ->required(),
-            ]);
+            ])->columns(3);
     }
 
     public static function infolist(Schema $schema): Schema

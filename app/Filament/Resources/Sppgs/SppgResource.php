@@ -15,22 +15,31 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class SppgResource extends Resource
 {
     protected static ?string $model = Sppg::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBuildingLibrary;
 
-    protected static bool $shouldRegisterNavigation = false;
+    protected static string|UnitEnum|null $navigationGroup = 'Master Data';
 
+    protected static ?int $navigationSort = 2;
+
+    protected static ?string $navigationLabel = 'SPPG';
+
+    protected static ?string $label = "Daftar SPPG";
+
+    protected static bool $shouldRegisterNavigation = true;
 
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->components([
                 TextInput::make('name')
-                    ->required(),
+                    ->required()
+                    ->columnSpanFull()
             ]);
     }
 
