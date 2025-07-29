@@ -11,6 +11,13 @@ class ManageMenuGroups extends ManageRecords
 {
     protected static string $resource = MenuGroupResource::class;
 
+    protected function beforeCreate(array $data): array
+    {
+        $data['created_by'] = auth()->id();
+        return $data;
+    }
+
+
     protected function getHeaderActions(): array
     {
         return [

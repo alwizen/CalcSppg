@@ -68,6 +68,7 @@ class IngredientResource extends Resource
             ->columns([
                 TextColumn::make('name')
                     ->searchable()
+                    ->formatStateUsing(fn($state) => strtoupper($state))
                     ->label('Nama Bahan'),
                 TextColumn::make('unit')
                     ->label('Satuan')

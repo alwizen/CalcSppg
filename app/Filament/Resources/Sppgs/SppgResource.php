@@ -43,36 +43,17 @@ class SppgResource extends Resource
                     ->label('Nama SPPG')
                     ->required(),
 
-                Select::make('province')
+                TextInput::make('province')
                     ->label('Provinsi')
-                    ->options(function () {
-                        $response = Http::get('https://emsifa.github.io/api-wilayah-indonesia/api/provinces.json');
-                        return collect($response->json())->pluck('name', 'name');
-                    })
-                    ->reactive()
-                    ->afterStateUpdated(fn($set) => $set('regency', null)),
+                    ->placeholder('Jawa Tengah'),
 
-                Select::make('regency')
+                TextInput::make('regency')
                     ->label('Kabupaten / Kota')
-                    ->options(function (callable $get) {
-                        $provinceId = $get('province');
-                        if (!$provinceId) return [];
+                    ->placeholder('Kab. Tegal'),
 
-                        $response = Http::get("https://emsifa.github.io/api-wilayah-indonesia/api/regencies/{$provinceId}.json");
-                        return collect($response->json())->pluck('name', 'name');
-                    })
-                    ->reactive()
-                    ->afterStateUpdated(fn($set) => $set('district', null)),
-
-                Select::make('district')
+                TextInput::make('district')
                     ->label('Kecamatan')
-                    ->options(function (callable $get) {
-                        $regencyId = $get('regency');
-                        if (!$regencyId) return [];
-
-                        $response = Http::get("https://emsifa.github.io/api-wilayah-indonesia/api/districts/{$regencyId}.json");
-                        return collect($response->json())->pluck('name', 'name');
-                    }),
+                    ->placeholder('Kramat'),
             ]);
     }
 
@@ -83,11 +64,14 @@ class SppgResource extends Resource
                 TextColumn::make('name')
                     ->searchable(),
                 TextColumn::make('province')
-                    ->label('Provinsi'),
+                    ->label('Provinsi')
+                    ->formatStateUsing(fn($state) => strtoupper($state)),
                 TextColumn::make('regency')
-                    ->label('Kabupaten'),
+                    ->label('Kabupaten')
+                    ->formatStateUsing(fn($state) => strtoupper($state)),
                 TextColumn::make('district')
-                    ->label('Kecamatan'),
+                    ->label('Kecamatan')
+                    ->formatStateUsing(fn($state) => strtoupper($state)),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

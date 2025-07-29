@@ -4,6 +4,7 @@ namespace App\Filament\Resources\MenuGroups;
 
 use App\Filament\Resources\MenuGroups\Pages\ManageMenuGroups;
 use App\Models\MenuGroup;
+use App\Models\User;
 use BackedEnum;
 use Dom\Text;
 use Filament\Actions\Action;
@@ -15,6 +16,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -25,7 +27,9 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Auth;
 
 class MenuGroupResource extends Resource
 {
@@ -60,6 +64,9 @@ class MenuGroupResource extends Resource
                     ->relationship('sppg', 'name')
                     ->label('Nama SPPG'),
 
+                Hidden::make('created_by')
+                    ->default(Auth::id()),
+
                 Repeater::make('recipes')
                     ->relationship()
                     ->columnSpanFull()
@@ -74,7 +81,7 @@ class MenuGroupResource extends Resource
                             ->numeric()
                             ->required(),
                     ])
-                    ->label('Daftar Resep')
+                    ->label('Daftar Menu')
                     ->columns(2)
                     ->required(),
             ])->columns(3);
@@ -84,6 +91,14 @@ class MenuGroupResource extends Resource
     {
         return $schema
             ->components([
+                TextEntry::make('createdBy.name')
+                    ->label('Dibuat Oleh')
+                    ->default('-'),
+
+                TextEntry::make('created_at')
+                    ->label('Tanggal Dibuat')
+                    ->dateTime(),
+
                 ViewEntry::make('kalkulasi_bahan')
                     ->label('Kalkulasi Bahan')
                     ->view('infolists.menu-group')
@@ -94,14 +109,25 @@ class MenuGroupResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->defaultSort('date', 'desc')
+            ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('date')
                     ->searchable()
                     ->label('Tanggal')
                     ->date(),
+
+                TextColumn::make('name')
+                    ->searchable()
+                    ->label('Nama Menu'),
+
+                TextColumn::make('sppg.name')
+                    ->searchable()
+                    ->label('SPPG')
+                    ->formatStateUsing(fn($state) => strtoupper($state)),
+
+
                 TextColumn::make('recipes_portions')
-                    ->label('Nama Menu')
+                    ->label('Menu Makanan')
                     ->listWithLineBreaks()
                     ->getStateUsing(function ($record) {
                         return $record->recipes->map(function ($menuRecipe) {
@@ -118,21 +144,37 @@ class MenuGroupResource extends Resource
                         })->toArray();
                     }),
 
+                TextColumn::make('createdBy.name')
+                    ->label('Dibuat Oleh')
+                    ->searchable()
+                    ->sortable()
+                    ->default('-'),
+
                 TextColumn::make('created_at')
+                    ->label('Tanggal Dibuat')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+
                 TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                SelectFilter::make('created_by')
+                    ->label('Dibuat Oleh')
+                    ->relationship('createdBy', 'name')
+                    ->searchable()
+                    ->preload(),
+                SelectFilter::make('sppg.name')
+                    ->label('SPPG')
+                    ->relationship('sppg', 'name')
+                    ->searchable()
+                    ->preload(),
             ])
             ->recordActions([
                 ActionGroup::make([
-                    ViewAction::make(),
                     Action::make('print_pdf')
                         ->label('Cetak PDF')
                         ->icon('heroicon-o-printer')
@@ -147,6 +189,9 @@ class MenuGroupResource extends Resource
                     ->button()
                     ->label('Tindakan')
                     ->icon(Heroicon::PaperClip),
+                ViewAction::make()
+                    ->label('')
+                    ->tooltip('Lihat'),
                 EditAction::make()
                     ->label('')
                     ->tooltip('Ubah'),
