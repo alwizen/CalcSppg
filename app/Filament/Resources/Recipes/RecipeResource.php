@@ -50,7 +50,7 @@ class RecipeResource extends Resource
         return $schema
             ->components([
                 TextInput::make('name')
-                    ->label('Nama Resep')
+                    ->label('Nama Menu Masakan')
                     ->required()
                     ->maxLength(255),
 
@@ -58,7 +58,7 @@ class RecipeResource extends Resource
                     ->label('Porsi Dasar')
                     // ->readOnly()
                     ->numeric()
-                    // ->default(1)
+                    ->default(1000)
                     ->required(),
 
                 Toggle::make('is_active')
@@ -75,8 +75,6 @@ class RecipeResource extends Resource
                             ->label('Bahan Baku')
                             ->relationship('ingredient', 'name')
                             ->required()
-                            ->searchable()
-                            ->preload()
                             ->live()
                             ->afterStateUpdated(function ($state, callable $set) {
                                 $unit = \App\Models\Ingredient::find($state)?->unit;

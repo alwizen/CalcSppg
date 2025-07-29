@@ -16,6 +16,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use UnitEnum;
 
@@ -43,8 +44,16 @@ class IngredientResource extends Resource
         return $schema
             ->components([
                 TextInput::make('name')
-                    ->required(),
-                TextInput::make('unit'),
+                    ->required()
+                    ->label('Nama Bahan Baku'),
+                TextInput::make('category')
+                    ->label('Kategori')
+                    ->required()
+                    ->placeholder('Masukkan kategori bahan baku'),
+                TextInput::make('unit')
+                    ->label('Satuan')
+                    ->required()
+                    ->placeholder('Masukkan satuan bahan baku'),
             ]);
     }
 
@@ -53,6 +62,7 @@ class IngredientResource extends Resource
         return $schema
             ->components([
                 TextEntry::make('name'),
+                TextEntry::make('category'),
                 TextEntry::make('unit'),
                 TextEntry::make('created_at')
                     ->dateTime(),
@@ -70,6 +80,9 @@ class IngredientResource extends Resource
                     ->searchable()
                     ->formatStateUsing(fn($state) => strtoupper($state))
                     ->label('Nama Bahan'),
+                TextColumn::make('category')
+                    ->label('Kategori')
+                    ->searchable(),
                 TextColumn::make('unit')
                     ->label('Satuan')
                     ->searchable(),
@@ -83,7 +96,9 @@ class IngredientResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                SelectFilter::make('category')
+                    ->label('Kategori')
+                    ->options(Ingredient::query()->distinct()->pluck('category', 'category'))
             ])
             ->recordActions([
                 ViewAction::make(),
