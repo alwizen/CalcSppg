@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 class Sppg extends Model
 {
     protected $fillable = [
-        'name'
+        'name',
+        'district',
+        'regency',
+        'province'
     ];
 }
