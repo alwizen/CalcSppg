@@ -324,9 +324,7 @@
                                 <table class="w-full bg-white">
                                     <thead>
                                         <tr class="bg-gradient-to-r from-blue-600 to-blue-700 text-white">
-                                            <th
-                                                class="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider w-16">
-                                                No</th>
+
                                             <th
                                                 class="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider">
                                                 Bahan</th>
@@ -474,7 +472,6 @@
                     (index % 2 === 0 ? 'bg-gray-50' : 'bg-white');
 
                 row.innerHTML = `
-                    <td class="px-6 py-4 text-center font-semibold text-blue-600">${index + 1}</td>
                     <td class="px-6 py-4 font-medium text-gray-900">${ingredient.name}</td>
                     <td class="px-6 py-4 text-right font-bold text-green-600">${ingredient.calculated_amount} ${ingredient.unit}</td>
                 `;
