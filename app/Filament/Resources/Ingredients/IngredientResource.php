@@ -61,9 +61,20 @@ class IngredientResource extends Resource
                     ])
                     ->required()
                     ->placeholder('Masukkan kategori bahan baku'),
-                TextInput::make('unit')
+                Select::make('unit')
                     ->label('Satuan')
                     ->required()
+                    ->options(
+                        [
+                            'kg' => 'Kg',
+                            'liter' => 'Liter',
+                            'pack' => 'Pack',
+                            'pouch' => 'Pouch',
+                            'batang' => 'batang',
+                            'liter' => 'Liter',
+                            'pcs' => 'Pcs'
+                        ]
+                    )
                     ->placeholder('Masukkan satuan bahan baku'),
             ]);
     }
