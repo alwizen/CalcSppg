@@ -115,11 +115,12 @@ class RecipeResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->defaultPaginationPageOption(50)
+            ->defaultPaginationPageOption(25)
             ->columns([
                 TextColumn::make('name')
                     ->label('Nama Menu')
-                    ->searchable(),
+                    ->searchable()
+                    ->formatStateUsing(fn($state) => strtoupper($state)),
                 TextColumn::make('base_portions')
                     ->numeric()
                     ->suffix(' Porsi')

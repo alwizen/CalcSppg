@@ -5,153 +5,445 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kalkulasi Dapur</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #374151;
+            min-height: 100vh;
+            background: url('/img/bg.png') center/contain no-repeat;
+            position: relative;
+        }
+
+        .overlay {
+            position: absolute;
+            inset: 0;
+            background-color: rgba(255, 255, 255, 0.75);
+            z-index: 1;
+        }
+
+        .content {
+            position: relative;
+            z-index: 10;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: white;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            margin-bottom: 2rem;
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #1f2937;
+        }
+
+        .login-btn {
+            background: #4f46e5;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+
+        .login-btn:hover {
+            background: #4338ca;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: #374151;
+            cursor: pointer;
+        }
+
+        .mobile-menu {
+            display: none;
+            border-top: 1px solid #e5e7eb;
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+        }
+
+        .mobile-menu .login-btn {
+            display: block;
+            text-align: center;
+            width: 100%;
+        }
+
+        /* Form */
+        .form-card {
+            max-width: 28rem;
+            margin: 0 auto 2rem;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 1.5rem;
+        }
+
+        .form-title {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .form-title h3 {
+            font-size: 1.125rem;
+            font-weight: 500;
+            color: #1f2937;
+            margin-bottom: 0.75rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input,
+        .form-select {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-input:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .submit-btn {
+            background: #2563eb;
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: block;
+            margin: 1rem auto 0;
+        }
+
+        .submit-btn:hover {
+            background: #1d4ed8;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        .spinner {
+            width: 3rem;
+            height: 3rem;
+            border: 2px solid #f97316;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Results */
+        .results-card {
+            max-width: 64rem;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 1.5rem;
+        }
+
+        .results-title {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .results-title h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+
+        .table-section h3 {
+            font-size: 1.125rem;
+            font-weight: 500;
+            color: #1f2937;
+            margin-bottom: 0.75rem;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin-bottom: 1rem;
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .results-table th {
+            background: #2563eb;
+            color: white;
+            padding: 1rem 1.5rem;
+            text-align: left;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 2px solid #1d4ed8;
+        }
+
+        .results-table th:nth-child(3) {
+            text-align: right;
+        }
+
+        .results-table th:nth-child(4) {
+            text-align: center;
+        }
+
+        .results-table td {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 0.875rem;
+        }
+
+        .results-table tr:nth-child(even) {
+            background: #f9fafb;
+        }
+
+        .results-table tr:hover {
+            background: #eff6ff;
+        }
+
+        .results-table td:first-child {
+            font-weight: 500;
+            color: #1f2937;
+        }
+
+        .results-table td:nth-child(3) {
+            text-align: right;
+            font-weight: bold;
+            color: #1f2937;
+        }
+
+        .results-table td:nth-child(4) {
+            text-align: center;
+            color: #374151;
+        }
+
+        /* Note */
+        .note {
+            background: rgba(254, 243, 199, 0.8);
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            text-align: center;
+        }
+
+        .note p {
+            color: #92400e;
+            font-size: 0.875rem;
+        }
+
+        /* Error */
+        .error-card {
+            max-width: 28rem;
+            margin: 0 auto;
+            background: rgba(254, 242, 242, 0.9);
+            border: 1px solid #fecaca;
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            text-align: center;
+        }
+
+        .error-card p {
+            color: #991b1b;
+            font-size: 0.875rem;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 3rem;
+            color: #6b7280;
+        }
+
+        /* Utilities */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 1.5rem;
+            }
+
+            .desktop-login {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .mobile-menu.show {
+                display: block;
+            }
+
+            .results-table th,
+            .results-table td {
+                padding: 0.75rem 1rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .login-btn span.lg-hidden {
+                display: none;
+            }
+        }
+    </style>
 </head>
 
-<body class="min-h-screen relative"
-    style="background-image: url('/img/bg.png'); background-size: contain; background-position: center; background-repeat: no-repeat; background-attachment: fixed;">
-    <!-- Overlay untuk meredam background -->
-    <div class="absolute inset-0 bg-white/70 backdrop-blur-[1px]"></div>
+<body>
+    <div class="overlay"></div>
 
-    <!-- Content -->
-    <div class="relative z-10">
+    <div class="content">
         <!-- Navbar -->
-        <nav class="bg-white shadow-lg sticky top-0 z-50 mb-8">
-            <div class="container mx-auto px-4">
-                <div class="flex justify-between items-center py-4">
-                    <!-- Logo/Brand -->
-                    <div class="flex items-center space-x-3">
-                        <h1 class="text-2xl md:text-3xl font-bold text-gray-800">
-                            🧮
-                        </h1>
+        <nav class="navbar">
+            <div class="container">
+                <div class="nav-content">
+                    <div>
+                        <h1 class="logo">🧮</h1>
                     </div>
 
-                    <!-- Desktop Login Button -->
-                    <div class="hidden md:block">
-                        <a href="/admin"
-                            class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition-all duration-200">
-                            <span class="hidden lg:inline">Login</span>
-                            <span class="lg:hidden">Admin</span>
+                    <div class="desktop-login">
+                        <a href="/admin" class="login-btn">
+                            <span class="lg-visible">Login</span>
+                            <span class="lg-hidden">Admin</span>
                         </a>
                     </div>
 
-                    <!-- Mobile Menu Button -->
-                    <div class="md:hidden">
-                        <button id="mobileMenuBtn" class="text-gray-700 hover:text-indigo-600 focus:outline-none">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M4 6h16M4 12h16M4 18h16"></path>
-                            </svg>
-                        </button>
-                    </div>
+                    <button class="mobile-menu-btn" id="mobileMenuBtn">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
                 </div>
 
-                <!-- Mobile Menu -->
-                <div id="mobileMenu" class="hidden md:hidden pb-4">
-                    <div class="border-t border-gray-200 pt-4">
-                        <a href="/admin"
-                            class="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-lg shadow-md transition-all duration-200 w-full">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                            </svg>
-                            Login Admin
-                        </a>
-                    </div>
+                <div class="mobile-menu" id="mobileMenu">
+                    <a href="/admin" class="login-btn">Login</a>
                 </div>
             </div>
         </nav>
 
-        <div class="container mx-auto px-4 py-8">
-            <!-- Header Subtitle -->
-            {{-- <div class="text-center mb-8">
-                <p class="text-gray-600 text-lg">Hitung bahan masakan untuk porsi yang diinginkan</p>
-            </div> --}}
-
+        <div class="container">
             <!-- Form Kalkulator -->
-            <div
-                class="max-w-lg mx-auto bg-white/95 backdrop-blur-md rounded-lg shadow-lg border border-white/20 p-6 mb-8">
-                <div class="text-center mb-8">
-                    <h3 class="text-lg font-medium text-gray-800 mb-3">Kalkulasi Bahan Baku Masakan</h3>
+            <div class="form-card">
+                <div class="form-title">
+                    <h3>Kalkulasi Bahan Baku Masakan</h3>
                 </div>
-                <form id="calculatorForm" class="space-y-4">
+                <form id="calculatorForm">
                     @csrf
 
-                    <!-- Pilih Menu -->
-                    <div>
-                        <label for="recipe_id" class="block text-sm font-medium text-gray-700 mb-2">
-                            Nama Menu
-                        </label>
-                        <select name="recipe_id" id="recipe_id" required
-                            class="w-full px-3 py-2 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                    <div class="form-group">
+                        <label for="recipe_id" class="form-label">Nama Menu</label>
+                        <select name="recipe_id" id="recipe_id" required class="form-select">
                             <option value="">-- Pilih Menu Masakan --</option>
                             @foreach ($recipes as $recipe)
                                 <option value="{{ $recipe->id }}" data-base-portions="{{ $recipe->base_portions }}">
                                     {{ $recipe->name }}
-                                    {{-- ({{ $recipe->base_portions }} porsi) --}}
                                 </option>
                             @endforeach
                         </select>
                     </div>
 
-                    <!-- Input Jumlah Porsi -->
-                    <div>
-                        <label for="portions" class="block text-sm font-medium text-gray-700 mb-2">
-                            Jumlah Porsi yang Diinginkan
-                        </label>
+                    <div class="form-group">
+                        <label for="portions" class="form-label">Jumlah Porsi yang Diinginkan</label>
                         <input type="number" name="portions" id="portions" min="1" step="1" required
-                            placeholder="Contoh: 100"
-                            class="w-full px-3 py-2 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                            placeholder="Contoh: 100" class="form-input">
                     </div>
 
-                    <!-- Tombol Hitung -->
-                    <div class="text-center pt-2">
-                        <button type="submit"
-                            class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-200">
-                            Hitung Bahan
-                        </button>
-                    </div>
+                    <button type="submit" class="submit-btn">Hitung Bahan</button>
                 </form>
             </div>
 
             <!-- Loading -->
-            <div id="loading" class="hidden text-center py-8">
-                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
-                <p class="text-gray-600">Menghitung bahan...</p>
+            <div id="loading" class="loading hidden">
+                <div class="spinner"></div>
+                <p>Menghitung bahan...</p>
             </div>
 
             <!-- Hasil Perhitungan -->
-            <div id="results"
-                class="hidden max-w-4xl mx-auto bg-white/95 backdrop-blur-md rounded-lg shadow-lg border border-white/20 p-6">
-                <div class="text-center mb-4">
-                    <h2 class="text-xl font-semibold text-gray-800 mb-2">Hasil Perhitungan</h2>
+            <div id="results" class="results-card hidden">
+                <div class="results-title">
+                    <h2>Hasil Perhitungan</h2>
                 </div>
 
-                <div class="mb-4">
-                    <h3 class="text-lg font-medium text-gray-800 mb-3">Bahan yang Dibutuhkan :</h3>
+                <div class="table-section">
+                    <h3>Bahan yang Dibutuhkan :</h3>
 
-                    <!-- Tabel Bahan -->
-                    <div class="overflow-x-auto">
-                        <table class="w-full border-collapse bg-white rounded-lg overflow-hidden shadow-sm">
+                    <div class="table-container">
+                        <table class="results-table">
                             <thead>
-                                <tr class="bg-gradient-to-r from-blue-500 to-blue-600 text-white">
-                                    <th
-                                        class="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider border-b-2 border-blue-700">
-                                        No
-                                    </th>
-                                    <th
-                                        class="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider border-b-2 border-blue-700">
-                                        Nama Bahan
-                                    </th>
-                                    <th
-                                        class="px-6 py-4 text-right text-sm font-semibold uppercase tracking-wider border-b-2 border-blue-700">
-                                        Jumlah
-                                    </th>
-                                    <th
-                                        class="px-6 py-4 text-center text-sm font-semibold uppercase tracking-wider border-b-2 border-blue-700">
-                                        Satuan
-                                    </th>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Nama Bahan</th>
+                                    <th>Jumlah</th>
+                                    <th>Satuan</th>
                                 </tr>
                             </thead>
                             <tbody id="ingredientsTable">
@@ -161,173 +453,163 @@
                     </div>
                 </div>
 
-                <div class="bg-orange-50/80 backdrop-blur-sm rounded-lg p-3 text-center">
-                    <p class="text-red-800 text-sm">
-                        <strong>Catatan:</strong> Hasil perhitungan ini berdasarkan standard Oprational.
-                    </p>
+                <div class="note">
+                    <p><strong>Catatan:</strong> Hasil perhitungan ini berdasarkan standard Operasional.</p>
                 </div>
             </div>
 
             <!-- Error Message -->
-            <div id="errorMessage"
-                class="hidden max-w-lg mx-auto bg-red-50/90 backdrop-blur-sm border border-red-200 rounded-lg p-3 text-center">
-                <p class="text-red-800 text-sm"></p>
+            <div id="errorMessage" class="error-card hidden">
+                <p></p>
             </div>
 
-            <!-- Admin Link -->
-            <div class="text-center mt-12">
-                <a href="#"
-                    class="inline-flex items-center text-gray-600 hover:text-orange-600 transition-colors">
-                    Made With ❤️ <b> RBJCorp.id</b>
-                </a>
+            <!-- Footer -->
+            <div class="footer">
+                Made With ❤️ <strong>RBJCorp.id</strong>
             </div>
         </div>
-</body>
-<script>
-    // Setup CSRF token untuk AJAX
-    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    </div>
 
-    document.getElementById('calculatorForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
+    <!-- JavaScript -->
+    <script>
+        // Setup CSRF token untuk AJAX
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-        const formData = new FormData(this);
-        const recipeId = formData.get('recipe_id');
-        const portions = formData.get('portions');
+        // Cache DOM elements
+        const elements = {
+            form: document.getElementById('calculatorForm'),
+            loading: document.getElementById('loading'),
+            results: document.getElementById('results'),
+            errorMessage: document.getElementById('errorMessage'),
+            ingredientsTable: document.getElementById('ingredientsTable'),
+            mobileMenu: document.getElementById('mobileMenu'),
+            mobileMenuBtn: document.getElementById('mobileMenuBtn'),
+            recipeSelect: document.getElementById('recipe_id')
+        };
 
-        if (!recipeId || !portions) {
-            showError('Harap pilih menu dan masukkan jumlah porsi!');
-            return;
-        }
+        elements.form.addEventListener('submit', async function(e) {
+            e.preventDefault();
 
-        // Show loading
-        document.getElementById('loading').classList.remove('hidden');
-        document.getElementById('results').classList.add('hidden');
-        document.getElementById('errorMessage').classList.add('hidden');
+            const formData = new FormData(this);
+            const recipeId = formData.get('recipe_id');
+            const portions = formData.get('portions');
 
-        try {
-            const response = await fetch('/calculate', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': csrfToken,
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify({
-                    recipe_id: recipeId,
-                    portions: parseInt(portions)
-                })
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                displayResults(data);
-            } else {
-                throw new Error(data.message || 'Terjadi kesalahan');
+            if (!recipeId || !portions) {
+                showError('Harap pilih menu dan masukkan jumlah porsi!');
+                return;
             }
 
-        } catch (error) {
-            showError('Terjadi kesalahan: ' + error.message);
-        } finally {
-            document.getElementById('loading').classList.add('hidden');
-        }
-    });
-</script>
-</body>
-<script>
-    function formatAmount(amount) {
-        const num = parseFloat(amount);
+            // Show loading
+            elements.loading.classList.remove('hidden');
+            elements.results.classList.add('hidden');
+            elements.errorMessage.classList.add('hidden');
 
-        // Jika angka 0, tampilkan 0
-        if (num === 0) {
-            return '0';
-        }
+            try {
+                const response = await fetch('/calculate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        recipe_id: recipeId,
+                        portions: parseInt(portions)
+                    })
+                });
 
-        // Jika angka bulat, tampilkan tanpa desimal
-        if (num % 1 === 0) {
-            return num.toString();
-        }
+                const data = await response.json();
 
-        // Untuk angka desimal, tentukan jumlah digit desimal berdasarkan ukuran angka
-        let formatted;
-        if (num < 0.0001) {
-            // Untuk angka sangat kecil, gunakan presisi tinggi
-            formatted = num.toFixed(8);
-        } else if (num < 0.001) {
-            formatted = num.toFixed(6);
-        } else if (num < 0.01) {
-            formatted = num.toFixed(5);
-        } else if (num < 0.1) {
-            formatted = num.toFixed(4);
-        } else if (num < 1) {
-            formatted = num.toFixed(3);
-        } else {
-            formatted = num.toFixed(2);
-        }
+                if (response.ok) {
+                    displayResults(data);
+                } else {
+                    throw new Error(data.message || 'Terjadi kesalahan');
+                }
 
-        return formatted.replace(/\.?0+$/, '');
-    }
-
-    function displayResults(data) {
-        // Update ingredients table
-        const ingredientsTable = document.getElementById('ingredientsTable');
-        ingredientsTable.innerHTML = data.ingredients.map((ingredient, index) => `
-                <tr class="${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'} hover:bg-blue-50 transition-colors">
-                    <td class="px-6 py-4 text-sm text-gray-900 font-medium border-b border-gray-200">
-                        ${index + 1}
-                    </td>
-                    <td class="px-6 py-4 text-sm text-gray-900 border-b border-gray-200">
-                        ${ingredient.name}
-                    </td>
-                    <td class="px-6 py-4 text-sm text-right font-bold text-black-600 border-b border-gray-200">
-                        ${ingredient.calculated_amount}
-                    </td>
-                    <td class="px-6 py-4 text-sm text-center text-gray-700 border-b border-gray-200">
-                        ${ingredient.unit}
-                    </td>
-                </tr>
-            `).join('');
-
-        // Show results
-        document.getElementById('results').classList.remove('hidden');
-
-        // Scroll to results
-        document.getElementById('results').scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
+            } catch (error) {
+                showError('Terjadi kesalahan: ' + error.message);
+            } finally {
+                elements.loading.classList.add('hidden');
+            }
         });
-    }
 
-    function showError(message) {
-        const errorDiv = document.getElementById('errorMessage');
-        errorDiv.querySelector('p').textContent = message;
-        errorDiv.classList.remove('hidden');
+        function formatAmount(amount) {
+            const num = parseFloat(amount);
 
-        // Auto hide after 5 seconds
-        setTimeout(() => {
-            errorDiv.classList.add('hidden');
-        }, 5000);
-    }
+            if (num === 0) {
+                return '0';
+            }
 
-    // Auto focus pada form pertama kali load
-    document.getElementById('recipe_id').focus();
+            if (num % 1 === 0) {
+                return num.toString();
+            }
 
-    // Mobile menu toggle
-    document.getElementById('mobileMenuBtn').addEventListener('click', function() {
-        const mobileMenu = document.getElementById('mobileMenu');
-        mobileMenu.classList.toggle('hidden');
-    });
+            let formatted;
+            if (num < 0.0001) {
+                formatted = num.toFixed(8);
+            } else if (num < 0.001) {
+                formatted = num.toFixed(6);
+            } else if (num < 0.01) {
+                formatted = num.toFixed(5);
+            } else if (num < 0.1) {
+                formatted = num.toFixed(4);
+            } else if (num < 1) {
+                formatted = num.toFixed(3);
+            } else {
+                formatted = num.toFixed(2);
+            }
 
-    // Close mobile menu when clicking outside
-    document.addEventListener('click', function(e) {
-        const mobileMenu = document.getElementById('mobileMenu');
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-
-        if (!mobileMenu.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
-            mobileMenu.classList.add('hidden');
+            return formatted.replace(/\.?0+$/, '');
         }
-    });
-</script>
+
+        function displayResults(data) {
+            const fragment = document.createDocumentFragment();
+
+            data.ingredients.forEach((ingredient, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${ingredient.name}</td>
+                    <td>${ingredient.calculated_amount}</td>
+                    <td>${ingredient.unit}</td>
+                `;
+                fragment.appendChild(row);
+            });
+
+            elements.ingredientsTable.innerHTML = '';
+            elements.ingredientsTable.appendChild(fragment);
+            elements.results.classList.remove('hidden');
+
+            elements.results.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+
+        function showError(message) {
+            elements.errorMessage.querySelector('p').textContent = message;
+            elements.errorMessage.classList.remove('hidden');
+
+            setTimeout(() => {
+                elements.errorMessage.classList.add('hidden');
+            }, 5000);
+        }
+
+        // Auto focus
+        elements.recipeSelect.focus();
+
+        // Mobile menu toggle
+        elements.mobileMenuBtn.addEventListener('click', function() {
+            elements.mobileMenu.classList.toggle('show');
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!elements.mobileMenu.contains(e.target) && !elements.mobileMenuBtn.contains(e.target)) {
+                elements.mobileMenu.classList.remove('show');
+            }
+        });
+    </script>
 </body>
 
 </html>
