@@ -312,7 +312,6 @@
                     <!-- Results Header -->
                     <div class="text-center mb-8">
                         <h2 class="text-2xl font-bold text-gray-800 mb-2">Hasil Perhitungan</h2>
-                        <p class="text-gray-600">Berikut adalah daftar bahan yang dibutuhkan</p>
                     </div>
 
                     <!-- Ingredients Table -->
@@ -331,7 +330,7 @@
                                                 No</th>
                                             <th
                                                 class="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider">
-                                                Nama Bahan</th>
+                                                Bahan</th>
                                             <th
                                                 class="px-6 py-4 text-right text-sm font-semibold uppercase tracking-wider w-32">
                                                 Jumlah</th>
