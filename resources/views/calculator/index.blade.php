@@ -7,6 +7,7 @@
     <title>Kalkulasi Dapur</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
+    <!-- CSS Inline - menghilangkan Tailwind CDN yang berat -->
     <style>
         * {
             margin: 0;
@@ -232,32 +233,49 @@
             border-radius: 0.5rem;
             overflow: hidden;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 2px solid #e5e7eb;
         }
 
         .results-table th {
             background: #2563eb;
             color: white;
-            padding: 1rem 1.5rem;
+            padding: 0.75rem 1rem;
             text-align: left;
             font-size: 0.875rem;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.05em;
             border-bottom: 2px solid #1d4ed8;
+            border-right: 1px solid #1d4ed8;
+        }
+
+        .results-table th:last-child {
+            border-right: none;
+        }
+
+        .results-table th:nth-child(1) {
+            width: 50px;
+            text-align: center;
+        }
+
+        .results-table th:nth-child(2) {
+            width: 200px;
         }
 
         .results-table th:nth-child(3) {
+            width: 120px;
             text-align: right;
-        }
-
-        .results-table th:nth-child(4) {
-            text-align: center;
         }
 
         .results-table td {
             padding: 1rem 1.5rem;
             border-bottom: 1px solid #e5e7eb;
+            border-right: 1px solid #e5e7eb;
             font-size: 0.875rem;
+        }
+
+        .results-table td:last-child {
+            border-right: none;
         }
 
         .results-table tr:nth-child(even) {
@@ -277,11 +295,6 @@
             text-align: right;
             font-weight: bold;
             color: #1f2937;
-        }
-
-        .results-table td:nth-child(4) {
-            text-align: center;
-            color: #374151;
         }
 
         /* Note */
@@ -345,7 +358,22 @@
 
             .results-table th,
             .results-table td {
-                padding: 0.75rem 1rem;
+                padding: 0.5rem 0.75rem;
+            }
+
+            .results-table th:nth-child(1),
+            .results-table td:first-child {
+                width: 40px;
+            }
+
+            .results-table th:nth-child(2),
+            .results-table td:nth-child(2) {
+                width: 150px;
+            }
+
+            .results-table th:nth-child(3),
+            .results-table td:nth-child(3) {
+                width: 100px;
             }
         }
 
@@ -443,7 +471,6 @@
                                     <th>No</th>
                                     <th>Nama Bahan</th>
                                     <th>Jumlah</th>
-                                    <th>Satuan</th>
                                 </tr>
                             </thead>
                             <tbody id="ingredientsTable">
@@ -570,8 +597,7 @@
                 row.innerHTML = `
                     <td>${index + 1}</td>
                     <td>${ingredient.name}</td>
-                    <td>${ingredient.calculated_amount}</td>
-                    <td>${ingredient.unit}</td>
+                    <td>${ingredient.calculated_amount} ${ingredient.unit}</td>
                 `;
                 fragment.appendChild(row);
             });
