@@ -10,6 +10,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
@@ -46,8 +47,18 @@ class IngredientResource extends Resource
                 TextInput::make('name')
                     ->required()
                     ->label('Nama Bahan Baku'),
-                TextInput::make('category')
+                Select::make('category')
                     ->label('Kategori')
+                    ->options([
+                        'buah' => 'Buah',
+                        'bumbu' => 'Bumbu',
+                        'daging' => 'Daging',
+                        'sereal' => 'Sereal',
+                        'sayuran' => 'Sayuran',
+                        'protein' => 'Protein',
+                        'olahan' => 'Olahan',
+                        'minyak' => 'minyak'
+                    ])
                     ->required()
                     ->placeholder('Masukkan kategori bahan baku'),
                 TextInput::make('unit')
