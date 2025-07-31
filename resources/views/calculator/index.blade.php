@@ -249,7 +249,7 @@
                 <div class="glass-effect rounded-3xl p-8 card-hover animate-fade-in">
                     <!-- Form Header -->
                     <div class="text-center mb-8">
-                        <h2 class="text-2xl font-bold text-gray-800 mb-2">Kalkulasi Bahan Baku</h2>
+                        <h2 class="text-2xl font-bold text-gray-800 mb-2">Kalkulasi Kebutuhan SPPG</h2>
                     </div>
 
                     <!-- Form -->
