@@ -250,7 +250,6 @@
                     <!-- Form Header -->
                     <div class="text-center mb-8">
                         <h2 class="text-2xl font-bold text-gray-800 mb-2">Kalkulasi Bahan Baku</h2>
-                        <p class="text-gray-600">Hitung kebutuhan bahan berdasarkan jumlah porsi</p>
                     </div>
 
                     <!-- Form -->
