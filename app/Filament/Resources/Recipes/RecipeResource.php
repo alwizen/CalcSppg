@@ -74,26 +74,17 @@ class RecipeResource extends Resource
                         Select::make('ingredient_id')
                             ->label('Bahan Baku')
                             ->relationship('ingredient', 'name')
-                            ->required()
-                            ->live()
-                            ->afterStateUpdated(function ($state, callable $set) {
-                                $unit = \App\Models\Ingredient::find($state)?->unit;
-                                $set('unit', $unit);
-                            }),
+                            ->required(),
+
                         TextInput::make('amount')
                             ->label('Jumlah')
                             ->numeric()
                             ->step(0.00001)
                             ->required(),
 
-                        TextInput::make('unit')
-                            ->label('Satuan')
-                            ->disabled()
-                            ->dehydrated(false)
-                            ->required(),
                     ])
                     ->columnSpanFull()
-                    ->columns(3)
+                    ->columns(2)
 
 
             ]);
