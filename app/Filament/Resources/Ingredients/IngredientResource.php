@@ -109,7 +109,10 @@ class IngredientResource extends Resource
             ->filters([
                 SelectFilter::make('category')
                     ->label('Kategori')
-                    ->options(Ingredient::query()->distinct()->pluck('category', 'category'))
+                    ->options(function () {
+                        $categories = Ingredient::query()->distinct()->pluck('category', 'category')->filter();
+                        return $categories->isNotEmpty() ? $categories->toArray() : [];
+                    })
             ])
             ->recordActions([
                 ViewAction::make(),
