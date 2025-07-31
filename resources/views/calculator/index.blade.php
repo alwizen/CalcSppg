@@ -7,502 +7,394 @@
     <title>Kalkulasi Dapur</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <!-- CSS Inline - menghilangkan Tailwind CDN yang berat -->
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-up': 'slideUp 0.6s ease-out',
+                        'bounce-light': 'bounceLight 2s infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': {
+                                opacity: '0',
+                                transform: 'translateY(10px)'
+                            },
+                            '100%': {
+                                opacity: '1',
+                                transform: 'translateY(0)'
+                            }
+                        },
+                        slideUp: {
+                            '0%': {
+                                opacity: '0',
+                                transform: 'translateY(30px)'
+                            },
+                            '100%': {
+                                opacity: '1',
+                                transform: 'translateY(0)'
+                            }
+                        },
+                        bounceLight: {
+                            '0%, 100%': {
+                                transform: 'translateY(0)'
+                            },
+                            '50%': {
+                                transform: 'translateY(-10px)'
+                            }
+                        },
+                        float: {
+                            '0%, 100%': {
+                                transform: 'translateY(0px) rotate(0deg)',
+                                opacity: '0.3'
+                            },
+                            '50%': {
+                                transform: 'translateY(-20px) rotate(180deg)',
+                                opacity: '0.8'
+                            }
+                        }
+                    },
+                    backdropBlur: {
+                        xs: '2px',
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            line-height: 1.6;
-            color: #374151;
-            min-height: 100vh;
-            background: url('/img/bg.png') center/contain no-repeat;
-            position: relative;
+            font-family: 'Inter', sans-serif;
         }
 
-        .overlay {
-            position: absolute;
-            inset: 0;
-            background-color: rgba(255, 255, 255, 0.75);
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card-hover:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .btn-gradient {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        }
+
+        .btn-gradient:hover {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+        }
+
+        .floating-particles {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
             z-index: 1;
         }
 
-        .content {
-            position: relative;
-            z-index: 10;
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1rem;
+        .particle:nth-child(1) {
+            width: 4px;
+            height: 4px;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
         }
 
-        /* Navbar */
-        .navbar {
-            background: white;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            position: sticky;
-            top: 0;
-            z-index: 50;
-            margin-bottom: 2rem;
+        .particle:nth-child(2) {
+            width: 6px;
+            height: 6px;
+            top: 60%;
+            left: 20%;
+            animation-delay: 1s;
         }
 
-        .nav-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 0;
+        .particle:nth-child(3) {
+            width: 3px;
+            height: 3px;
+            top: 40%;
+            left: 70%;
+            animation-delay: 2s;
         }
 
-        .logo {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #1f2937;
+        .particle:nth-child(4) {
+            width: 5px;
+            height: 5px;
+            top: 80%;
+            left: 80%;
+            animation-delay: 3s;
         }
 
-        .login-btn {
-            background: #4f46e5;
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            text-decoration: none;
-            font-weight: 500;
-            transition: background 0.2s;
+        .particle:nth-child(5) {
+            width: 4px;
+            height: 4px;
+            top: 30%;
+            left: 90%;
+            animation-delay: 4s;
         }
 
-        .login-btn:hover {
-            background: #4338ca;
+        .table-row-hover:hover {
+            background: linear-gradient(90deg, rgb(239 246 255), rgb(240 249 255));
+            transform: scale(1.01);
         }
 
-        .mobile-menu-btn {
-            display: none;
-            background: none;
-            border: none;
-            color: #374151;
-            cursor: pointer;
-        }
-
-        .mobile-menu {
-            display: none;
-            border-top: 1px solid #e5e7eb;
-            padding-top: 1rem;
-            padding-bottom: 1rem;
-        }
-
-        .mobile-menu .login-btn {
-            display: block;
-            text-align: center;
-            width: 100%;
-        }
-
-        /* Form */
-        .form-card {
-            max-width: 28rem;
-            margin: 0 auto 2rem;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 0.5rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 1.5rem;
-        }
-
-        .form-title {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .form-title h3 {
-            font-size: 1.125rem;
-            font-weight: 500;
-            color: #1f2937;
-            margin-bottom: 0.75rem;
-        }
-
-        .form-group {
-            margin-bottom: 1rem;
-        }
-
-        .form-label {
-            display: block;
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: #374151;
-            margin-bottom: 0.5rem;
-        }
-
-        .form-input,
-        .form-select {
-            width: 100%;
-            padding: 0.5rem 0.75rem;
-            border: 1px solid #d1d5db;
-            border-radius: 0.5rem;
-            font-size: 1rem;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-
-        .form-input:focus,
-        .form-select:focus {
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-
-        .submit-btn {
-            background: #2563eb;
-            color: white;
-            padding: 0.5rem 1.5rem;
-            border: none;
-            border-radius: 0.5rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background 0.2s;
-            display: block;
-            margin: 1rem auto 0;
-        }
-
-        .submit-btn:hover {
-            background: #1d4ed8;
-        }
-
-        /* Loading */
-        .loading {
-            text-align: center;
-            padding: 2rem 0;
-        }
-
+        /* Loading spinner */
         .spinner {
+            border: 3px solid rgba(99, 102, 241, 0.2);
+            border-top: 3px solid #6366f1;
+            border-radius: 50%;
             width: 3rem;
             height: 3rem;
-            border: 2px solid #f97316;
-            border-top: 2px solid transparent;
-            border-radius: 50%;
             animation: spin 1s linear infinite;
-            margin: 0 auto 1rem;
         }
 
         @keyframes spin {
-            to {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
                 transform: rotate(360deg);
-            }
-        }
-
-        /* Results */
-        .results-card {
-            max-width: 64rem;
-            margin: 0 auto;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 0.5rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 1.5rem;
-        }
-
-        .results-title {
-            text-align: center;
-            margin-bottom: 1rem;
-        }
-
-        .results-title h2 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: #1f2937;
-            margin-bottom: 0.5rem;
-        }
-
-        .table-section h3 {
-            font-size: 1.125rem;
-            font-weight: 500;
-            color: #1f2937;
-            margin-bottom: 0.75rem;
-        }
-
-        .table-container {
-            overflow-x: auto;
-            margin-bottom: 1rem;
-        }
-
-        .results-table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            border-radius: 0.5rem;
-            overflow: hidden;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            border: 2px solid #e5e7eb;
-        }
-
-        .results-table th {
-            background: #2563eb;
-            color: white;
-            padding: 0.75rem 1rem;
-            text-align: left;
-            font-size: 0.875rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            border-bottom: 2px solid #1d4ed8;
-            border-right: 1px solid #1d4ed8;
-        }
-
-        .results-table th:last-child {
-            border-right: none;
-        }
-
-        .results-table th:nth-child(1) {
-            width: 50px;
-            text-align: center;
-        }
-
-        .results-table th:nth-child(2) {
-            width: 200px;
-        }
-
-        .results-table th:nth-child(3) {
-            width: 120px;
-            text-align: right;
-        }
-
-        .results-table td {
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid #e5e7eb;
-            border-right: 1px solid #e5e7eb;
-            font-size: 0.875rem;
-        }
-
-        .results-table td:last-child {
-            border-right: none;
-        }
-
-        .results-table tr:nth-child(even) {
-            background: #f9fafb;
-        }
-
-        .results-table tr:hover {
-            background: #eff6ff;
-        }
-
-        .results-table td:first-child {
-            font-weight: 500;
-            color: #1f2937;
-        }
-
-        .results-table td:nth-child(3) {
-            text-align: right;
-            font-weight: bold;
-            color: #1f2937;
-        }
-
-        /* Note */
-        .note {
-            background: rgba(254, 243, 199, 0.8);
-            border-radius: 0.5rem;
-            padding: 0.75rem;
-            text-align: center;
-        }
-
-        .note p {
-            color: #92400e;
-            font-size: 0.875rem;
-        }
-
-        /* Error */
-        .error-card {
-            max-width: 28rem;
-            margin: 0 auto;
-            background: rgba(254, 242, 242, 0.9);
-            border: 1px solid #fecaca;
-            border-radius: 0.5rem;
-            padding: 0.75rem;
-            text-align: center;
-        }
-
-        .error-card p {
-            color: #991b1b;
-            font-size: 0.875rem;
-        }
-
-        /* Footer */
-        .footer {
-            text-align: center;
-            margin-top: 3rem;
-            color: #6b7280;
-        }
-
-        /* Utilities */
-        .hidden {
-            display: none !important;
-        }
-
-        /* Mobile Responsive */
-        @media (max-width: 768px) {
-            .logo {
-                font-size: 1.5rem;
-            }
-
-            .desktop-login {
-                display: none;
-            }
-
-            .mobile-menu-btn {
-                display: block;
-            }
-
-            .mobile-menu.show {
-                display: block;
-            }
-
-            .results-table th,
-            .results-table td {
-                padding: 0.5rem 0.75rem;
-            }
-
-            .results-table th:nth-child(1),
-            .results-table td:first-child {
-                width: 40px;
-            }
-
-            .results-table th:nth-child(2),
-            .results-table td:nth-child(2) {
-                width: 150px;
-            }
-
-            .results-table th:nth-child(3),
-            .results-table td:nth-child(3) {
-                width: 100px;
-            }
-        }
-
-        @media (min-width: 1024px) {
-            .login-btn span.lg-hidden {
-                display: none;
             }
         }
     </style>
 </head>
 
-<body>
-    <div class="overlay"></div>
+<body class="min-h-screen gradient-bg font-inter overflow-x-hidden">
 
-    <div class="content">
-        <!-- Navbar -->
-        <nav class="navbar">
-            <div class="container">
-                <div class="nav-content">
-                    <div>
-                        <h1 class="logo">🧮</h1>
-                    </div>
+    <!-- Floating Particles -->
+    <div class="floating-particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
 
-                    <div class="desktop-login">
-                        <a href="/admin" class="login-btn">
-                            <span class="lg-visible">Login</span>
-                            <span class="lg-hidden">Admin</span>
-                        </a>
-                    </div>
-
-                    <button class="mobile-menu-btn" id="mobileMenuBtn">
-                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M4 6h16M4 12h16M4 18h16"></path>
-                        </svg>
-                    </button>
+    <!-- Navbar -->
+    <nav class="glass-effect sticky top-0 z-50 mb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <!-- Logo -->
+                <div class="flex items-center space-x-3">
+                    <div class="text-3xl">🧮</div>
+                    <h1
+                        class="text-xl font-bold text-white bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent">
+                        Kalkulasi SPPG
+                    </h1>
                 </div>
 
-                <div class="mobile-menu" id="mobileMenu">
-                    <a href="/admin" class="login-btn">Login</a>
+                <!-- Desktop Menu -->
+                <div class="hidden md:block">
+                    <a href="/admin"
+                        class="glass-effect px-6 py-2 rounded-full text-white font-medium hover:bg-white/30 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg flex items-center space-x-2">
+                        <span>Login</span>
+                    </a>
                 </div>
-            </div>
-        </nav>
 
-        <div class="container">
-            <!-- Form Kalkulator -->
-            <div class="form-card">
-                <div class="form-title">
-                    <h3>Kalkulasi Bahan Baku Masakan</h3>
-                </div>
-                <form id="calculatorForm">
-                    @csrf
-
-                    <div class="form-group">
-                        <label for="recipe_id" class="form-label">Nama Menu</label>
-                        <select name="recipe_id" id="recipe_id" required class="form-select">
-                            <option value="">-- Pilih Menu Masakan --</option>
-                            @foreach ($recipes as $recipe)
-                                <option value="{{ $recipe->id }}" data-base-portions="{{ $recipe->base_portions }}">
-                                    {{ $recipe->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="portions" class="form-label">Jumlah Porsi yang Diinginkan</label>
-                        <input type="number" name="portions" id="portions" min="1" step="1" required
-                            placeholder="Contoh: 100" class="form-input">
-                    </div>
-
-                    <button type="submit" class="submit-btn">Hitung Bahan</button>
-                </form>
+                <!-- Mobile Menu Button -->
+                <button id="mobileMenuBtn"
+                    class="md:hidden glass-effect p-2 rounded-lg text-white hover:bg-white/20 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
             </div>
 
-            <!-- Loading -->
-            <div id="loading" class="loading hidden">
-                <div class="spinner"></div>
-                <p>Menghitung bahan...</p>
+            <!-- Mobile Menu -->
+            <div id="mobileMenu" class="hidden md:hidden border-t border-white/20 pt-4 pb-4">
+                <a href="/admin"
+                    class="block glass-effect px-4 py-3 rounded-lg text-white font-medium hover:bg-white/30 transition-colors text-center">
+                    Login
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="relative z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+            <!-- Calculator Form -->
+            <div class="max-w-md mx-auto mb-8">
+                <div class="glass-effect rounded-3xl p-8 card-hover animate-fade-in">
+                    <!-- Form Header -->
+                    <div class="text-center mb-8">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-2">Kalkulasi Bahan Baku</h2>
+                        <p class="text-gray-600">Hitung kebutuhan bahan berdasarkan jumlah porsi</p>
+                    </div>
+
+                    <!-- Form -->
+                    <form id="calculatorForm" class="space-y-6">
+                        @csrf
+
+                        <!-- Recipe Selection -->
+                        <div class="space-y-2">
+                            <label for="recipe_id"
+                                class="flex items-center space-x-2 text-sm font-semibold text-gray-700">
+
+                                <span>Nama Menu</span>
+                            </label>
+                            <select name="recipe_id" id="recipe_id" required
+                                class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition-all duration-300 bg-white/80 hover:bg-white/90">
+                                <option value="">-- Pilih Menu Masakan --</option>
+                                @foreach ($recipes as $recipe)
+                                    <option value="{{ $recipe->id }}"
+                                        data-base-portions="{{ $recipe->base_portions }}">
+                                        {{ $recipe->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <!-- Portions Input -->
+                        <div class="space-y-2">
+                            <label for="portions"
+                                class="flex items-center space-x-2 text-sm font-semibold text-gray-700">
+
+                                <span>Jumlah Porsi</span>
+                            </label>
+                            <input type="number" name="portions" id="portions" min="1" step="1" required
+                                placeholder="Masukkan jumlah porsi (contoh: 100)"
+                                class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-green-500 focus:ring-4 focus:ring-green-500/20 transition-all duration-300 bg-white/80 hover:bg-white/90">
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit"
+                            class="w-full btn-gradient text-white font-semibold py-4 px-6 rounded-xl hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 flex items-center justify-center space-x-2 group">
+
+                            <span>Hitung Bahan</span>
+                        </button>
+                    </form>
+                </div>
             </div>
 
-            <!-- Hasil Perhitungan -->
-            <div id="results" class="results-card hidden">
-                <div class="results-title">
-                    <h2>Hasil Perhitungan</h2>
+            <!-- Loading State -->
+            <div id="loading" class="hidden text-center py-12">
+                <div class="inline-block">
+                    <div class="spinner mx-auto mb-4"></div>
+                    <p class="text-white font-medium text-lg">Sedang menghitung bahan yang dibutuhkan...</p>
                 </div>
+            </div>
 
-                <div class="table-section">
-                    <h3>Bahan yang Dibutuhkan :</h3>
-
-                    <div class="table-container">
-                        <table class="results-table">
-                            <thead>
-                                <tr>
-                                    <th>No</th>
-                                    <th>Nama Bahan</th>
-                                    <th>Jumlah</th>
-                                </tr>
-                            </thead>
-                            <tbody id="ingredientsTable">
-                                <!-- Data akan diisi oleh JavaScript -->
-                            </tbody>
-                        </table>
+            <!-- Results -->
+            <div id="results" class="hidden max-w-4xl mx-auto animate-slide-up">
+                <div class="glass-effect rounded-3xl p-8 card-hover">
+                    <!-- Results Header -->
+                    <div class="text-center mb-8">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-2">Hasil Perhitungan</h2>
+                        <p class="text-gray-600">Berikut adalah daftar bahan yang dibutuhkan</p>
                     </div>
-                </div>
 
-                <div class="note">
-                    <p><strong>Catatan:</strong> Hasil perhitungan ini berdasarkan standard Operasional.</p>
+                    <!-- Ingredients Table -->
+                    <div class="mb-6">
+                        <h3 class="flex items-center space-x-2 text-lg font-semibold text-gray-800 mb-4">
+                            <svg class="w-5 h-5 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                                <path
+                                    d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z">
+                                </path>
+                            </svg>
+                            <span>Bahan yang Dibutuhkan</span>
+                        </h3>
+
+                        <div class="overflow-hidden rounded-2xl shadow-lg">
+                            <div class="overflow-x-auto">
+                                <table class="w-full bg-white">
+                                    <thead>
+                                        <tr class="bg-gradient-to-r from-blue-600 to-blue-700 text-white">
+                                            <th
+                                                class="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider w-16">
+                                                No</th>
+                                            <th
+                                                class="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider">
+                                                Nama Bahan</th>
+                                            <th
+                                                class="px-6 py-4 text-right text-sm font-semibold uppercase tracking-wider w-32">
+                                                Jumlah</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="ingredientsTable" class="divide-y divide-gray-200">
+                                        <!-- Data akan diisi oleh JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Note -->
+                    <div class="bg-gradient-to-r from-amber-50 to-yellow-50 border-l-4 border-amber-400 rounded-lg p-4">
+                        <div class="flex items-start space-x-3">
+                            <div class="text-2xl">💡</div>
+                            <div>
+                                <p class="text-amber-800 font-medium">
+                                    <strong>Catatan:</strong> Hasil perhitungan ini berdasarkan Standar Operasional
+                                    Prosedur (SOP) dapur.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <!-- Error Message -->
-            <div id="errorMessage" class="error-card hidden">
-                <p></p>
+            <div id="errorMessage" class="hidden max-w-md mx-auto">
+                <div class="bg-gradient-to-r from-red-50 to-pink-50 border border-red-200 rounded-2xl p-6 text-center">
+                    <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <svg class="w-6 h-6 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                                clip-rule="evenodd"></path>
+                        </svg>
+                    </div>
+                    <p class="text-red-800 font-medium"></p>
+                </div>
             </div>
 
             <!-- Footer -->
-            <div class="footer">
-                Made With ❤️ <strong>RBJCorp.id</strong>
-            </div>
+            <footer class="text-center mt-16 pb-8">
+                <p class="text-white/80 text-sm">
+                    Made with ❤️ by <span
+                        class="font-semibold bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent">RBJCorp.id</span>
+                </p>
+            </footer>
+
         </div>
     </div>
 
-    <!-- JavaScript -->
     <script>
-        // Setup CSRF token untuk AJAX
+        // Setup CSRF token
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-        // Cache DOM elements
+        // DOM elements
         const elements = {
             form: document.getElementById('calculatorForm'),
             loading: document.getElementById('loading'),
@@ -514,6 +406,7 @@
             recipeSelect: document.getElementById('recipe_id')
         };
 
+        // Form submission
         elements.form.addEventListener('submit', async function(e) {
             e.preventDefault();
 
@@ -521,15 +414,19 @@
             const recipeId = formData.get('recipe_id');
             const portions = formData.get('portions');
 
+            // Validation
             if (!recipeId || !portions) {
-                showError('Harap pilih menu dan masukkan jumlah porsi!');
+                showError('Harap pilih menu dan masukkan jumlah porsi yang valid!');
+                return;
+            }
+
+            if (portions < 1) {
+                showError('Jumlah porsi harus minimal 1!');
                 return;
             }
 
             // Show loading
-            elements.loading.classList.remove('hidden');
-            elements.results.classList.add('hidden');
-            elements.errorMessage.classList.add('hidden');
+            showLoading();
 
             try {
                 const response = await fetch('/calculate', {
@@ -548,93 +445,87 @@
                 const data = await response.json();
 
                 if (response.ok) {
-                    displayResults(data);
+                    setTimeout(() => displayResults(data), 800);
                 } else {
-                    throw new Error(data.message || 'Terjadi kesalahan');
+                    throw new Error(data.message || 'Terjadi kesalahan saat menghitung');
                 }
 
             } catch (error) {
+                console.error('Error:', error);
                 showError('Terjadi kesalahan: ' + error.message);
             } finally {
-                elements.loading.classList.add('hidden');
+                hideLoading();
             }
         });
 
-        function formatAmount(amount) {
-            const num = parseFloat(amount);
-
-            if (num === 0) {
-                return '0';
-            }
-
-            if (num % 1 === 0) {
-                return num.toString();
-            }
-
-            let formatted;
-            if (num < 0.0001) {
-                formatted = num.toFixed(8);
-            } else if (num < 0.001) {
-                formatted = num.toFixed(6);
-            } else if (num < 0.01) {
-                formatted = num.toFixed(5);
-            } else if (num < 0.1) {
-                formatted = num.toFixed(4);
-            } else if (num < 1) {
-                formatted = num.toFixed(3);
-            } else {
-                formatted = num.toFixed(2);
-            }
-
-            return formatted.replace(/\.?0+$/, '');
+        // Show loading state
+        function showLoading() {
+            elements.loading.classList.remove('hidden');
+            elements.results.classList.add('hidden');
+            elements.errorMessage.classList.add('hidden');
         }
 
+        // Hide loading state
+        function hideLoading() {
+            elements.loading.classList.add('hidden');
+        }
+
+        // Display results
         function displayResults(data) {
-            const fragment = document.createDocumentFragment();
+            const tbody = elements.ingredientsTable;
+            tbody.innerHTML = '';
 
             data.ingredients.forEach((ingredient, index) => {
                 const row = document.createElement('tr');
+                row.className = 'table-row-hover transition-all duration-200 ' +
+                    (index % 2 === 0 ? 'bg-gray-50' : 'bg-white');
+
                 row.innerHTML = `
-                    <td>${index + 1}</td>
-                    <td>${ingredient.name}</td>
-                    <td>${ingredient.calculated_amount} ${ingredient.unit}</td>
+                    <td class="px-6 py-4 text-center font-semibold text-blue-600">${index + 1}</td>
+                    <td class="px-6 py-4 font-medium text-gray-900">${ingredient.name}</td>
+                    <td class="px-6 py-4 text-right font-bold text-green-600">${ingredient.calculated_amount} ${ingredient.unit}</td>
                 `;
-                fragment.appendChild(row);
+
+                tbody.appendChild(row);
             });
 
-            elements.ingredientsTable.innerHTML = '';
-            elements.ingredientsTable.appendChild(fragment);
             elements.results.classList.remove('hidden');
 
-            elements.results.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
+            // Smooth scroll to results
+            setTimeout(() => {
+                elements.results.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }, 100);
         }
 
+        // Show error message
         function showError(message) {
             elements.errorMessage.querySelector('p').textContent = message;
             elements.errorMessage.classList.remove('hidden');
+            elements.results.classList.add('hidden');
 
+            // Auto hide after 5 seconds
             setTimeout(() => {
                 elements.errorMessage.classList.add('hidden');
             }, 5000);
         }
 
-        // Auto focus
-        elements.recipeSelect.focus();
-
         // Mobile menu toggle
         elements.mobileMenuBtn.addEventListener('click', function() {
-            elements.mobileMenu.classList.toggle('show');
+            elements.mobileMenu.classList.toggle('hidden');
         });
 
         // Close mobile menu when clicking outside
         document.addEventListener('click', function(e) {
             if (!elements.mobileMenu.contains(e.target) && !elements.mobileMenuBtn.contains(e.target)) {
-                elements.mobileMenu.classList.remove('show');
+                elements.mobileMenu.classList.add('hidden');
             }
         });
+
+        // Auto focus on recipe select
+        elements.recipeSelect.focus();
     </script>
 </body>
 
