@@ -70,7 +70,7 @@
 
     <div class="info-section">
         <p><strong>Tanggal:</strong> {{ $menuGroup->date->format('d-m-Y') }}</p>
-        <p><strong>Nama Perhitungan:</strong> {{ $menuGroup->name}}</p>
+        <p><strong>Hari Ke-:</strong> {{ $menuGroup->name}}</p>
         <p><strong>Nama SPPG:</strong> {{ $menuGroup->sppg?->name ?? 'Belum dipilih' }}</p>
     </div>
 
@@ -93,8 +93,8 @@
                     return $menuRecipe->recipe->name;
                 })->join(', ');
                 
-                // Gabungkan semua porsi
-                $totalPortions = $menuGroup->recipes->sum('requested_portions');
+                // Ambil porsi dari menu pertama (karena input sama untuk semua)
+                $portions = $menuGroup->recipes->first()?->requested_portions ?? 0;
                 
                 // Kumpulkan semua ingredients dari semua recipes dalam menu group ini
                 $allIngredients = collect();
@@ -137,7 +137,7 @@
                         </td>
                         <td class="text-center">
                             @if($index === 0)
-                                {{ $totalPortions }}
+                                {{ $portions }}
                             @endif
                         </td>
                         <td>{{ $ingredient['name'] }}</td>
@@ -150,7 +150,7 @@
                     <td class="text-center">{{ $menuGroup->date->format('Y-m-d') }}</td>
                     <td class="text-center">{{ $menuGroup->name }}</td>
                     <td>{{ $menuNames }}</td>
-                    <td class="text-center">{{ $totalPortions }}</td>
+                    <td class="text-center">{{ $portions }}</td>
                     <td>Tidak ada bahan</td>
                     <td class="text-center">-</td>
                     <td class="text-center">-</td>

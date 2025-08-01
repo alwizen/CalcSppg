@@ -37,8 +37,8 @@ class MenuGroupController extends Controller
                 return $menuRecipe->recipe->name;
             })->join(', ');
 
-            // Gabungkan semua porsi
-            $totalPortions = $menuGroup->recipes->sum('requested_portions');
+            // Ambil porsi dari menu pertama (karena input sama untuk semua)
+            $totalPortions = $menuGroup->recipes->first()?->requested_portions ?? 0;
 
             // Kumpulkan semua ingredients dari semua recipes dalam menu group ini
             $allIngredients = collect();
