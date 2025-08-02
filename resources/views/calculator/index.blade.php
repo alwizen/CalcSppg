@@ -21,52 +21,6 @@
                     fontFamily: {
                         'inter': ['Inter', 'sans-serif'],
                     },
-                    animation: {
-                        'fade-in': 'fadeIn 0.5s ease-in-out',
-                        'slide-up': 'slideUp 0.6s ease-out',
-                        'bounce-light': 'bounceLight 2s infinite',
-                        'float': 'float 6s ease-in-out infinite',
-                    },
-                    keyframes: {
-                        fadeIn: {
-                            '0%': {
-                                opacity: '0',
-                                transform: 'translateY(10px)'
-                            },
-                            '100%': {
-                                opacity: '1',
-                                transform: 'translateY(0)'
-                            }
-                        },
-                        slideUp: {
-                            '0%': {
-                                opacity: '0',
-                                transform: 'translateY(30px)'
-                            },
-                            '100%': {
-                                opacity: '1',
-                                transform: 'translateY(0)'
-                            }
-                        },
-                        bounceLight: {
-                            '0%, 100%': {
-                                transform: 'translateY(0)'
-                            },
-                            '50%': {
-                                transform: 'translateY(-10px)'
-                            }
-                        },
-                        float: {
-                            '0%, 100%': {
-                                transform: 'translateY(0px) rotate(0deg)',
-                                opacity: '0.3'
-                            },
-                            '50%': {
-                                transform: 'translateY(-20px) rotate(180deg)',
-                                opacity: '0.8'
-                            }
-                        }
-                    },
                     backdropBlur: {
                         xs: '2px',
                     }
@@ -87,16 +41,7 @@
         }
 
         .gradient-bg {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-
-        .card-hover {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .card-hover:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            background: linear-gradient(135deg, #061c49 0%, #a7d7de 50%, #c8aa62 100%);
         }
 
         .btn-gradient {
@@ -107,64 +52,8 @@
             background: linear-gradient(135deg, #4f46e5, #7c3aed);
         }
 
-        .floating-particles {
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        .particle {
-            position: absolute;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            animation: float 6s ease-in-out infinite;
-        }
-
-        .particle:nth-child(1) {
-            width: 4px;
-            height: 4px;
-            top: 20%;
-            left: 10%;
-            animation-delay: 0s;
-        }
-
-        .particle:nth-child(2) {
-            width: 6px;
-            height: 6px;
-            top: 60%;
-            left: 20%;
-            animation-delay: 1s;
-        }
-
-        .particle:nth-child(3) {
-            width: 3px;
-            height: 3px;
-            top: 40%;
-            left: 70%;
-            animation-delay: 2s;
-        }
-
-        .particle:nth-child(4) {
-            width: 5px;
-            height: 5px;
-            top: 80%;
-            left: 80%;
-            animation-delay: 3s;
-        }
-
-        .particle:nth-child(5) {
-            width: 4px;
-            height: 4px;
-            top: 30%;
-            left: 90%;
-            animation-delay: 4s;
-        }
-
         .table-row-hover:hover {
             background: linear-gradient(90deg, rgb(239 246 255), rgb(240 249 255));
-            transform: scale(1.01);
         }
 
         /* Loading spinner */
@@ -191,22 +80,13 @@
 
 <body class="min-h-screen gradient-bg font-inter overflow-x-hidden">
 
-    <!-- Floating Particles -->
-    <div class="floating-particles">
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-    </div>
-
     <!-- Navbar -->
     <nav class="glass-effect sticky top-0 z-50 mb-8">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center py-4">
                 <!-- Logo -->
                 <div class="flex items-center space-x-3">
-                    <div class="text-3xl">🧮</div>
+                    <div class="text-3xl">🍳</div>
                     <h1
                         class="text-xl font-bold text-white bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent">
                         Kalkulasi SPPG
@@ -216,7 +96,7 @@
                 <!-- Desktop Menu -->
                 <div class="hidden md:block">
                     <a href="/admin"
-                        class="glass-effect px-6 py-2 rounded-full text-white font-medium hover:bg-white/30 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg flex items-center space-x-2">
+                        class="glass-effect px-6 py-2 rounded-full text-white font-medium hover:bg-white/30 transition-colors flex items-center space-x-2">
                         <span>Login</span>
                     </a>
                 </div>
@@ -246,10 +126,11 @@
 
             <!-- Calculator Form -->
             <div class="max-w-md mx-auto mb-8">
-                <div class="glass-effect rounded-3xl p-8 card-hover animate-fade-in">
+                <div class="glass-effect rounded-3xl p-8">
                     <!-- Form Header -->
                     <div class="text-center mb-8">
-                        <h2 class="text-2xl font-bold text-gray-800 mb-2">Kalkulasi Kebutuhan SPPG</h2>
+                        <h2 class="text-2xl font-bold mb-2 bg-gradient-to-r from-black to-blue-100 bg-clip-text">
+                            Kalkulasi Kebutuhan SPPG</h2>
                     </div>
 
                     <!-- Form -->
@@ -260,11 +141,10 @@
                         <div class="space-y-2">
                             <label for="recipe_id"
                                 class="flex items-center space-x-2 text-sm font-semibold text-gray-700">
-
                                 <span>Nama Menu</span>
                             </label>
                             <select name="recipe_id" id="recipe_id" required
-                                class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition-all duration-300 bg-white/80 hover:bg-white/90">
+                                class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition-colors bg-white/80 hover:bg-white/90">
                                 <option value="">-- Pilih Menu Masakan --</option>
                                 @foreach ($recipes as $recipe)
                                     <option value="{{ $recipe->id }}"
@@ -279,19 +159,17 @@
                         <div class="space-y-2">
                             <label for="portions"
                                 class="flex items-center space-x-2 text-sm font-semibold text-gray-700">
-
                                 <span>Jumlah Porsi</span>
                             </label>
                             <input type="number" name="portions" id="portions" min="1" step="1" required
                                 placeholder="Masukkan jumlah porsi (contoh: 100)"
-                                class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-green-500 focus:ring-4 focus:ring-green-500/20 transition-all duration-300 bg-white/80 hover:bg-white/90">
+                                class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-green-500 focus:ring-4 focus:ring-green-500/20 transition-colors bg-white/80 hover:bg-white/90">
                         </div>
 
                         <!-- Submit Button -->
                         <button type="submit"
-                            class="w-full btn-gradient text-white font-semibold py-4 px-6 rounded-xl hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 flex items-center justify-center space-x-2 group">
-
-                            <span>Hitung Bahan</span>
+                            class="w-full btn-gradient text-white font-semibold py-4 px-6 rounded-xl hover:shadow-lg transition-all duration-200 flex items-center justify-center space-x-2 group">
+                            <span>Hitung</span>
                         </button>
                     </form>
                 </div>
@@ -306,8 +184,8 @@
             </div>
 
             <!-- Results -->
-            <div id="results" class="hidden max-w-4xl mx-auto animate-slide-up">
-                <div class="glass-effect rounded-3xl p-8 card-hover">
+            <div id="results" class="hidden max-w-4xl mx-auto">
+                <div class="glass-effect rounded-3xl p-8">
                     <!-- Results Header -->
                     <div class="text-center mb-8">
                         <h2 class="text-2xl font-bold text-gray-800 mb-2">Hasil Perhitungan</h2>
@@ -319,24 +197,27 @@
                             <span>Bahan yang Dibutuhkan</span>
                         </h3>
 
-                        <div class="overflow-hidden rounded-2xl shadow-lg">
-                            <div class="overflow-x-auto">
-                                <table class="w-full bg-white">
+                        <div class="overflow-hidden rounded-xl shadow-lg">
+                            <div
+                                class="relative flex flex-col w-full h-full overflow-scroll text-gray-700 bg-white shadow-md rounded-xl bg-clip-border">
+                                <table class="w-full text-center table-auto min-w-max">
                                     <thead>
                                         <tr class="bg-gradient-to-r from-blue-600 to-blue-700 text-white">
-
                                             <th
-                                                class="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider">
-                                                Bahan</th>
+                                                class="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider border-b border-gray-300">
+                                                Bahan
+                                            </th>
                                             <th
-                                                class="px-6 py-4 text-right text-sm font-semibold uppercase tracking-wider w-32">
-                                                Jumlah</th>
+                                                class="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider border-b border-gray-300 whitespace-nowrap">
+                                                Jumlah
+                                            </th>
                                         </tr>
                                     </thead>
                                     <tbody id="ingredientsTable" class="divide-y divide-gray-200">
                                         <!-- Data akan diisi oleh JavaScript -->
                                     </tbody>
                                 </table>
+
                             </div>
                         </div>
                     </div>
@@ -372,9 +253,9 @@
 
             <!-- Footer -->
             <footer class="text-center mt-16 pb-8">
-                <p class="text-white/80 text-sm">
+                <p class="text-black/80 text-sm">
                     Made with ❤️ by <span
-                        class="font-semibold bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent">RBJCorp.id</span>
+                        class="font-semibold bg-gradient-to-r from-black to-blue-100 bg-clip-text">RBJCorp.id</span>
                 </p>
             </footer>
 
@@ -436,7 +317,7 @@
                 const data = await response.json();
 
                 if (response.ok) {
-                    setTimeout(() => displayResults(data), 800);
+                    displayResults(data);
                 } else {
                     throw new Error(data.message || 'Terjadi kesalahan saat menghitung');
                 }
@@ -468,26 +349,18 @@
 
             data.ingredients.forEach((ingredient, index) => {
                 const row = document.createElement('tr');
-                row.className = 'table-row-hover transition-all duration-200 ' +
+                row.className = 'table-row-hover transition-colors duration-200 ' +
                     (index % 2 === 0 ? 'bg-gray-50' : 'bg-white');
 
                 row.innerHTML = `
-                    <td class="px-6 py-4 font-medium text-gray-900">${ingredient.name}</td>
-                    <td class="px-6 py-4 text-right font-bold text-green-600">${ingredient.calculated_amount} ${ingredient.unit}</td>
+                    <td class="px-4 py-3 font-medium text-gray-900 text-sm">${ingredient.name}</td>
+                    <td class="px-4 py-3 text-center font-bold text-green-600 text-sm">${ingredient.calculated_amount} ${ingredient.unit}</td>
                 `;
 
                 tbody.appendChild(row);
             });
 
             elements.results.classList.remove('hidden');
-
-            // Smooth scroll to results
-            setTimeout(() => {
-                elements.results.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }, 100);
         }
 
         // Show error message

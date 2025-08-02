@@ -58,6 +58,7 @@ class MenuGroupResource extends Resource
                 TextInput::make('name')
                     ->label('Nama Menu')
                     ->required()
+                    ->prefix('Hari ke')
                     ->placeholder('Menu Hari ke'),
 
                 Select::make('sppg_id')
@@ -118,7 +119,8 @@ class MenuGroupResource extends Resource
 
                 TextColumn::make('name')
                     ->searchable()
-                    ->label('Nama Menu'),
+                    ->prefix('Hari ke - ')
+                    ->label('Hari'),
 
                 TextColumn::make('sppg.name')
                     ->searchable()
@@ -165,12 +167,12 @@ class MenuGroupResource extends Resource
                 SelectFilter::make('created_by')
                     ->label('Dibuat Oleh')
                     ->relationship('createdBy', 'name')
-                    ->searchable()
+                    // ->searchable()
                     ->preload(),
                 SelectFilter::make('sppg.name')
                     ->label('SPPG')
                     ->relationship('sppg', 'name')
-                    ->searchable()
+                    // ->searchable()
                     ->preload(),
             ])
             ->recordActions([
