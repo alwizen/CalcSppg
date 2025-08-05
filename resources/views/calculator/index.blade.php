@@ -52,6 +52,14 @@
             background: linear-gradient(135deg, #4f46e5, #7c3aed);
         }
 
+        .btn-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(135deg, #059669, #047857);
+        }
+
         .table-row-hover:hover {
             background: linear-gradient(90deg, rgb(239 246 255), rgb(240 249 255));
         }
@@ -74,6 +82,28 @@
             100% {
                 transform: rotate(360deg);
             }
+        }
+
+        /* Smooth transitions */
+        .slide-down {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .slide-down.open {
+            max-height: 1000px;
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease-out;
+        }
+
+        .fade-in.show {
+            opacity: 1;
+            transform: translateY(0);
         }
     </style>
 </head>
@@ -137,22 +167,42 @@
                     <form id="calculatorForm" class="space-y-6">
                         @csrf
 
-                        <!-- Recipe Selection -->
-                        <div class="space-y-2">
-                            <label for="recipe_id"
-                                class="flex items-center space-x-2 text-sm font-semibold text-gray-700">
-                                <span>Nama Menu</span>
+                        <!-- Menu Repeater Container -->
+                        <div class="space-y-4">
+                            <label class="flex items-center space-x-2 text-sm font-semibold text-gray-700">
+                                <span>Menu yang Dipilih</span>
                             </label>
-                            <select name="recipe_id" id="recipe_id" required
-                                class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition-colors bg-white/80 hover:bg-white/90">
-                                <option value="">-- Pilih Menu Masakan --</option>
-                                @foreach ($recipes as $recipe)
-                                    <option value="{{ $recipe->id }}"
-                                        data-base-portions="{{ $recipe->base_portions }}">
-                                        {{ $recipe->name }}
-                                    </option>
-                                @endforeach
-                            </select>
+
+                            <div id="menuRepeater" class="space-y-3">
+                                <!-- Initial menu row -->
+                                <div class="menu-row fade-in show">
+                                    <div class="flex space-x-2 items-center">
+                                        <select name="recipes[]" required
+                                            class="recipe-select flex-1 px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition-colors bg-white/80 hover:bg-white/90">
+                                            <option value="">-- Pilih Menu Masakan --</option>
+                                            @foreach ($recipes as $recipe)
+                                                <option value="{{ $recipe->id }}"
+                                                    data-base-portions="{{ $recipe->base_portions }}">
+                                                    {{ $recipe->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        <button type="button"
+                                            class="remove-menu text-red-500 hover:text-red-700 p-2 rounded-lg hover:bg-red-50 transition-colors opacity-50 cursor-not-allowed">
+                                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd"
+                                                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                                    clip-rule="evenodd"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="button" id="addMenu"
+                                class="w-full py-3 px-4 text-sm text-blue-600 hover:text-blue-800 border-2 border-dashed border-blue-300 hover:border-blue-500 rounded-xl transition-colors hover:bg-blue-50 font-medium">
+                                + Tambah Menu Lain
+                            </button>
                         </div>
 
                         <!-- Portions Input -->
@@ -251,6 +301,21 @@
                 </div>
             </div>
 
+            <!-- Success Message -->
+            <div id="successMessage" class="hidden max-w-md mx-auto">
+                <div
+                    class="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-2xl p-6 text-center">
+                    <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                clip-rule="evenodd"></path>
+                        </svg>
+                    </div>
+                    <p class="text-green-800 font-medium"></p>
+                </div>
+            </div>
+
             <!-- Footer -->
             <footer class="text-center mt-16 pb-8">
                 <p class="text-black/80 text-sm">
@@ -272,10 +337,12 @@
             loading: document.getElementById('loading'),
             results: document.getElementById('results'),
             errorMessage: document.getElementById('errorMessage'),
+            successMessage: document.getElementById('successMessage'),
             ingredientsTable: document.getElementById('ingredientsTable'),
             mobileMenu: document.getElementById('mobileMenu'),
             mobileMenuBtn: document.getElementById('mobileMenuBtn'),
-            recipeSelect: document.getElementById('recipe_id')
+            addMenu: document.getElementById('addMenu'),
+            menuRepeater: document.getElementById('menuRepeater')
         };
 
         // Form submission
@@ -283,12 +350,12 @@
             e.preventDefault();
 
             const formData = new FormData(this);
-            const recipeId = formData.get('recipe_id');
+            const recipeIds = formData.getAll('recipes[]').filter(id => id); // Remove empty values
             const portions = formData.get('portions');
 
             // Validation
-            if (!recipeId || !portions) {
-                showError('Harap pilih menu dan masukkan jumlah porsi yang valid!');
+            if (recipeIds.length === 0 || !portions) {
+                showError('Harap pilih minimal satu menu dan masukkan jumlah porsi yang valid!');
                 return;
             }
 
@@ -301,7 +368,7 @@
             showLoading();
 
             try {
-                const response = await fetch('/calculate', {
+                const response = await fetch('/calculate-multiple', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -309,7 +376,7 @@
                         'Accept': 'application/json'
                     },
                     body: JSON.stringify({
-                        recipe_id: recipeId,
+                        recipe_ids: recipeIds,
                         portions: parseInt(portions)
                     })
                 });
@@ -330,11 +397,72 @@
             }
         });
 
+        // Add Menu functionality
+        elements.addMenu.addEventListener('click', function() {
+            const newMenuRow = createMenuRow();
+            elements.menuRepeater.appendChild(newMenuRow);
+            updateRemoveButtons();
+        });
+
+        // Create menu row
+        function createMenuRow() {
+            const row = document.createElement('div');
+            row.className = 'menu-row fade-in';
+            row.innerHTML = `
+                <div class="flex space-x-2 items-center">
+                    <select name="recipes[]" required
+                        class="recipe-select flex-1 px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition-colors bg-white/80 hover:bg-white/90">
+                        <option value="">-- Pilih Menu Masakan --</option>
+                        @foreach ($recipes as $recipe)
+                            <option value="{{ $recipe->id }}"
+                                data-base-portions="{{ $recipe->base_portions }}">
+                                {{ $recipe->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                    <button type="button" class="remove-menu text-red-500 hover:text-red-700 p-2 rounded-lg hover:bg-red-50 transition-colors">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                        </svg>
+                    </button>
+                </div>
+            `;
+
+            // Add remove functionality
+            row.querySelector('.remove-menu').addEventListener('click', function() {
+                row.remove();
+                updateRemoveButtons();
+            });
+
+            // Trigger animation
+            setTimeout(() => {
+                row.classList.add('show');
+            }, 10);
+
+            return row;
+        }
+
+        // Update remove buttons state
+        function updateRemoveButtons() {
+            const menuRows = document.querySelectorAll('.menu-row');
+            menuRows.forEach((row, index) => {
+                const removeBtn = row.querySelector('.remove-menu');
+                if (menuRows.length === 1) {
+                    removeBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                    removeBtn.disabled = true;
+                } else {
+                    removeBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    removeBtn.disabled = false;
+                }
+            });
+        }
+
         // Show loading state
         function showLoading() {
             elements.loading.classList.remove('hidden');
             elements.results.classList.add('hidden');
             elements.errorMessage.classList.add('hidden');
+            elements.successMessage.classList.add('hidden');
         }
 
         // Hide loading state
@@ -368,11 +496,24 @@
             elements.errorMessage.querySelector('p').textContent = message;
             elements.errorMessage.classList.remove('hidden');
             elements.results.classList.add('hidden');
+            elements.successMessage.classList.add('hidden');
 
             // Auto hide after 5 seconds
             setTimeout(() => {
                 elements.errorMessage.classList.add('hidden');
             }, 5000);
+        }
+
+        // Show success message
+        function showSuccess(message) {
+            elements.successMessage.querySelector('p').textContent = message;
+            elements.successMessage.classList.remove('hidden');
+            elements.errorMessage.classList.add('hidden');
+
+            // Auto hide after 3 seconds
+            setTimeout(() => {
+                elements.successMessage.classList.add('hidden');
+            }, 3000);
         }
 
         // Mobile menu toggle
@@ -387,8 +528,8 @@
             }
         });
 
-        // Auto focus on recipe select
-        elements.recipeSelect.focus();
+        // Initialize remove buttons state
+        updateRemoveButtons();
     </script>
 </body>
 

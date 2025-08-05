@@ -30,3 +30,4 @@ Route::get('/menu-groups/{menuGroup}/print', [MenuGroupPdfController::class, 'pr
 
 Route::get('/', [CalculatorController::class, 'index'])->name('calculator.index');
 Route::post('/calculate', [CalculatorController::class, 'calculate'])->name('calculator.calculate');
+Route::post('/calculate-multiple', [CalculatorController::class, 'calculateMultiple']);
