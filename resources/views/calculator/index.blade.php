@@ -60,6 +60,14 @@
             background: linear-gradient(135deg, #059669, #047857);
         }
 
+        .btn-copy {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+
+        .btn-copy:hover {
+            background: linear-gradient(135deg, #d97706, #b45309);
+        }
+
         .table-row-hover:hover {
             background: linear-gradient(90deg, rgb(239 246 255), rgb(240 249 255));
         }
@@ -105,6 +113,45 @@
             opacity: 1;
             transform: translateY(0);
         }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease-out;
+            display: flex;
+            items-center: center;
+            gap: 8px;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 0;
+            margin-left: 8px;
+            opacity: 0.8;
+        }
+
+        .toast .close-btn:hover {
+            opacity: 1;
+        }
     </style>
 </head>
 
@@ -126,7 +173,7 @@
                 <!-- Desktop Menu -->
                 <div class="hidden md:block">
                     <a href="/admin"
-                        class="glass-effect px-6 py-2 rounded-full text-white font-medium hover:bg-white/30 transition-colors flex items-center space-x-2">
+                        class="glass-effect px-6 py-2 rounded-full text-gray-700 font-medium hover:bg-white/30 transition-colors flex items-center space-x-2">
                         <span>Login</span>
                     </a>
                 </div>
@@ -239,6 +286,19 @@
                     <!-- Results Header -->
                     <div class="text-center mb-8">
                         <h2 class="text-2xl font-bold text-gray-800 mb-2">Hasil Perhitungan</h2>
+                        <p id="resultsSummary" class="text-gray-600 text-sm"></p>
+                    </div>
+
+                    <!-- Copy Button -->
+                    <div class="flex justify-center mb-6">
+                        <button id="copyTableBtn"
+                            class="btn-copy text-white font-semibold py-2 px-4 rounded-lg hover:shadow-lg transition-all duration-200 flex items-center space-x-2">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"></path>
+                                <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z"></path>
+                            </svg>
+                            <span>Copy Tabel</span>
+                        </button>
                     </div>
 
                     <!-- Ingredients Table -->
@@ -250,7 +310,7 @@
                         <div class="overflow-hidden rounded-xl shadow-lg">
                             <div
                                 class="relative flex flex-col w-full h-full overflow-scroll text-gray-700 bg-white shadow-md rounded-xl bg-clip-border">
-                                <table class="w-full text-center table-auto min-w-max">
+                                <table class="w-full text-center table-auto min-w-max" id="ingredientsTableElement">
                                     <thead>
                                         <tr class="bg-gradient-to-r from-blue-600 to-blue-700 text-white">
                                             <th
@@ -342,8 +402,13 @@
             mobileMenu: document.getElementById('mobileMenu'),
             mobileMenuBtn: document.getElementById('mobileMenuBtn'),
             addMenu: document.getElementById('addMenu'),
-            menuRepeater: document.getElementById('menuRepeater')
+            menuRepeater: document.getElementById('menuRepeater'),
+            copyTableBtn: document.getElementById('copyTableBtn'),
+            resultsSummary: document.getElementById('resultsSummary')
         };
+
+        // Global variable to store current results
+        let currentResults = null;
 
         // Form submission
         elements.form.addEventListener('submit', async function(e) {
@@ -384,6 +449,11 @@
                 const data = await response.json();
 
                 if (response.ok) {
+                    currentResults = {
+                        ...data,
+                        portions: parseInt(portions),
+                        selectedMenus: getSelectedMenuNames(recipeIds)
+                    };
                     displayResults(data);
                 } else {
                     throw new Error(data.message || 'Terjadi kesalahan saat menghitung');
@@ -396,6 +466,125 @@
                 hideLoading();
             }
         });
+
+        // Get selected menu names
+        function getSelectedMenuNames(recipeIds) {
+            const menuNames = [];
+            recipeIds.forEach(id => {
+                const select = document.querySelector(`select[name="recipes[]"] option[value="${id}"]`);
+                if (select) {
+                    menuNames.push(select.textContent.trim());
+                }
+            });
+            return menuNames;
+        }
+
+        // Copy functionality
+        elements.copyTableBtn.addEventListener('click', function() {
+            copyTableAsText();
+        });
+
+        // Copy table as formatted text
+        function copyTableAsText() {
+            if (!currentResults) return;
+
+            const today = new Date().toLocaleDateString('id-ID', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+
+            let text = `KALKULASI KEBUTUHAN BAHAN SPPG\n`;
+            text += `Tanggal: ${today}\n`;
+            text += `Jumlah Porsi: ${currentResults.portions}\n`;
+            text += `Menu: ${currentResults.selectedMenus.join(', ')}\n\n`;
+            text += `DAFTAR BAHAN:\n`;
+            text += `${'='.repeat(40)}\n`;
+            
+            currentResults.ingredients.forEach((ingredient, index) => {
+                text += `${index + 1}. ${ingredient.name}: ${ingredient.calculated_amount} ${ingredient.unit}\n`;
+            });
+            
+            text += `${'='.repeat(40)}\n`;
+            text += `Total Bahan: ${currentResults.ingredients.length} item\n\n`;
+            text += `Catatan: Hasil perhitungan berdasarkan SOP dapur\n`;
+            text += `Generated by RBJCorp.id`;
+
+            copyToClipboard(text, 'Tabel berhasil disalin!');
+        }
+
+        // Show toast notification
+        function showToast(message) {
+            // Remove existing toast if any
+            const existingToast = document.querySelector('.toast');
+            if (existingToast) {
+                existingToast.remove();
+            }
+
+            // Create new toast
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = `
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                </svg>
+                <span>${message}</span>
+                <button class="close-btn">&times;</button>
+            `;
+
+            document.body.appendChild(toast);
+
+            // Show toast
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 100);
+
+            // Close button functionality
+            toast.querySelector('.close-btn').addEventListener('click', function() {
+                hideToast(toast);
+            });
+
+            // Auto hide after 3 seconds
+            setTimeout(() => {
+                hideToast(toast);
+            }, 3000);
+        }
+
+        // Hide toast
+        function hideToast(toast) {
+            toast.classList.remove('show');
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.parentNode.removeChild(toast);
+                }
+            }, 300);
+        }
+
+        // Copy to clipboard helper
+        async function copyToClipboard(text, successMessage) {
+            try {
+                await navigator.clipboard.writeText(text);
+                showSuccess(successMessage);
+                
+                // Add visual feedback
+                const button = event.target.closest('button');
+                button.classList.add('copy-success');
+                setTimeout(() => {
+                    button.classList.remove('copy-success');
+                }, 500);
+            } catch (err) {
+                console.error('Failed to copy: ', err);
+                // Fallback method
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showSuccess(successMessage);
+            }
+        }
 
         // Add Menu functionality
         elements.addMenu.addEventListener('click', function() {
@@ -474,6 +663,9 @@
         function displayResults(data) {
             const tbody = elements.ingredientsTable;
             tbody.innerHTML = '';
+
+            // Update summary
+            elements.resultsSummary.textContent = `Total ${data.ingredients.length} bahan untuk ${currentResults.portions} porsi`;
 
             data.ingredients.forEach((ingredient, index) => {
                 const row = document.createElement('tr');
