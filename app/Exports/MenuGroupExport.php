@@ -8,10 +8,11 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 
 class MenuGroupExport implements FromArray, WithHeadings
 {
-    protected $menuGroup;
+    protected MenuGroup $menuGroup;
 
     public function __construct(MenuGroup $menuGroup)
     {
+        // load relasi yang dibutuhkan
         $this->menuGroup = $menuGroup->load('recipes.recipe.recipeIngredients.ingredient');
     }
 
@@ -20,22 +21,34 @@ class MenuGroupExport implements FromArray, WithHeadings
         $data = [];
         $no = 1;
 
+        // porsi global per menu group (fallback 1)
+        $groupPortions = (int) ($this->menuGroup->requested_portions ?? 1);
+        if ($groupPortions < 1) {
+            $groupPortions = 1;
+        }
+
         foreach ($this->menuGroup->recipes as $menuRecipe) {
             $recipe = $menuRecipe->recipe;
-            $multiplier = $menuRecipe->requested_portions / $recipe->base_portions;
-            $ingredients = $recipe->recipeIngredients;
 
-            foreach ($ingredients as $index => $ri) {
+            // base_portions aman dari null/0
+            $base = (float) ($recipe->base_portions ?? 1);
+            if ($base <= 0) {
+                $base = 1;
+            }
+
+            $multiplier = $groupPortions / $base;
+
+            foreach ($recipe->recipeIngredients as $idx => $ri) {
                 $ingredient = $ri->ingredient;
-                $amount = round($ri->amount * $multiplier, 2);
+                $amount = round(((float) $ri->amount) * $multiplier, 2);
 
                 $data[] = [
-                    'no'          => $index === 0 ? $no : '',
-                    'menu'        => $index === 0 ? $recipe->name : '',
-                    'porsi'       => $index === 0 ? $menuRecipe->requested_portions : '',
-                    'bahan'       => $ingredient->name,
-                    'jumlah'      => $amount,
-                    'satuan'      => $ingredient->unit,
+                    'no'     => $idx === 0 ? $no : '',
+                    'menu'   => $idx === 0 ? $recipe->name : '',
+                    'porsi'  => $idx === 0 ? $groupPortions : '',
+                    'bahan'  => $ingredient->name ?? '-',
+                    'jumlah' => $amount,
+                    'satuan' => strtoupper($ingredient->unit ?? ''),
                 ];
             }
 

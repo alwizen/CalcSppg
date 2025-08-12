@@ -10,7 +10,7 @@ class MenuGroupRecipe extends Model
     protected $fillable = [
         'menu_group_id',
         'recipe_id',
-        'requested_portions',
+        // 'requested_portions',
     ];
 
     public function menuGroup(): BelongsTo

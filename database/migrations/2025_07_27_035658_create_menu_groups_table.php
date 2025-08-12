@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->date('date');
             $table->string('name');
+            $table->unsignedInteger('requested_portions');
             $table->foreignId('sppg_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });

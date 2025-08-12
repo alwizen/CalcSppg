@@ -65,6 +65,11 @@ class MenuGroupResource extends Resource
                     ->relationship('sppg', 'name')
                     ->label('Nama SPPG'),
 
+                TextInput::make('requested_portions')
+                    ->label('Jumlah Porsi')
+                    ->numeric()
+                    ->required(),
+
                 Hidden::make('created_by')
                     ->default(Auth::id()),
 
@@ -76,16 +81,11 @@ class MenuGroupResource extends Resource
                             ->label('Menu Masakan')
                             ->relationship('recipe', 'name')
                             ->required(),
-
-                        TextInput::make('requested_portions')
-                            ->label('Jumlah Porsi')
-                            ->numeric()
-                            ->required(),
                     ])
                     ->label('Daftar Menu')
-                    ->columns(2)
+                    ->columnSpanFull()
                     ->required(),
-            ])->columns(3);
+            ])->columns(2);
     }
 
     public static function infolist(Schema $schema): Schema
@@ -137,14 +137,14 @@ class MenuGroupResource extends Resource
                         })->toArray();
                     }),
 
-                TextColumn::make('portions')
-                    ->label('Porsi')
-                    ->listWithLineBreaks()
-                    ->getStateUsing(function ($record) {
-                        return $record->recipes->map(function ($menuRecipe) {
-                            return "{$menuRecipe->requested_portions} porsi";
-                        })->toArray();
-                    }),
+                TextColumn::make('requested_portions')
+                    ->label('Porsi'),
+                // ->listWithLineBreaks()
+                // ->getStateUsing(function ($record) {
+                //     return $record->recipes->map(function ($menuRecipe) {
+                //         return "{$menuRecipe->requested_portions} porsi";
+                //     })->toArray();
+                // }),
 
                 TextColumn::make('createdBy.name')
                     ->label('Dibuat Oleh')

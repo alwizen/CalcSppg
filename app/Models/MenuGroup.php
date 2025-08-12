@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class MenuGroup extends Model
 {
-    protected $fillable = ['date', 'name', 'sppg_id', 'created_by'];
+    protected $fillable = ['date', 'name', 'sppg_id', 'created_by', 'requested_portions'];
 
     protected $casts = [
         'date' => 'datetime',

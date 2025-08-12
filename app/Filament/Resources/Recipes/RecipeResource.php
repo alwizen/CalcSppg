@@ -24,6 +24,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 use UnitEnum;
 
 class RecipeResource extends Resource
@@ -90,28 +91,6 @@ class RecipeResource extends Resource
             ]);
     }
 
-    public static function infolist(Schema $schema): Schema
-    {
-        return $schema
-            ->components([
-                TextEntry::make('name'),
-                IconEntry::make('is_active')->boolean(),
-
-                RepeatableEntry::make('ingredients')
-                    ->label('Bahan-bahan')
-                    ->schema([
-                        TextEntry::make('name')
-                            ->label('Nama Bahan'),
-                        TextEntry::make('pivot.amount')
-                            ->label('Jumlah'),
-                        TextEntry::make('unit')
-                            ->label('Satuan'),
-                    ])
-                    ->columnSpanFull()
-                    ->columns(3),
-            ]);
-    }
-
     public static function table(Table $table): Table
     {
         return $table
@@ -141,12 +120,13 @@ class RecipeResource extends Resource
                 //
             ])
             ->recordActions([
-                ViewAction::make(),
+                // ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
+                    ExportBulkAction::make(),
                     DeleteBulkAction::make(),
                 ]),
             ]);

@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('menu_group_id')->constrained()->cascadeOnDelete();
             $table->foreignId('recipe_id')->constrained()->cascadeOnDelete();
-            $table->unsignedInteger('requested_portions');
             $table->timestamps();
         });
     }

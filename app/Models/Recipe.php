@@ -15,14 +15,10 @@ class Recipe extends Model
         'name',
         'slug',
         'base_portions',
-        'description',
         'is_active'
     ];
 
-    protected $casts = [
-        'is_active' => 'boolean',
-    ];
-
+    protected $casts = ['base_portions' => 'integer', 'is_active' => 'boolean'];
 
     protected static function boot()
     {

@@ -76,7 +76,8 @@ class IngredientResource extends Resource
                         ]
                     )
                     ->placeholder('Masukkan satuan bahan baku'),
-            ]);
+            ])
+            ->columns(3);
     }
 
     public static function infolist(Schema $schema): Schema
@@ -90,7 +91,8 @@ class IngredientResource extends Resource
                     ->dateTime(),
                 TextEntry::make('updated_at')
                     ->dateTime(),
-            ]);
+            ])
+            ->columns(3);
     }
 
     public static function table(Table $table): Table

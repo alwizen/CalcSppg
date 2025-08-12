@@ -18,6 +18,8 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Swis\Filament\Backgrounds\FilamentBackgroundsPlugin;
+use Swis\Filament\Backgrounds\ImageProviders\MyImages;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -30,7 +32,7 @@ class AdminPanelProvider extends PanelProvider
             ->brandName('SPPG Calk')
             ->brandLogo(asset('img/bgn.png'))
             ->favicon(asset('img/fav.png'))
-            ->brandLogoHeight('3.7rem')
+            ->brandLogoHeight('3.9rem')
             ->login()
             ->darkMode(false)
             ->colors([
@@ -45,6 +47,14 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 // AccountWidget::class,
                 // FilamentInfoWidget::class,
+            ])
+            ->plugins([
+                FilamentBackgroundsPlugin::make()
+                    // ->showAttribution(false)
+                    ->imageProvider(
+                        MyImages::make()
+                            ->directory('images/bg')
+                    ),
             ])
             ->middleware([
                 EncryptCookies::class,

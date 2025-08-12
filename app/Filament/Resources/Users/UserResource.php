@@ -39,15 +39,17 @@ class UserResource extends Resource
         return $schema
             ->components([
                 TextInput::make('name')
-                    ->required(),
+                    ->required()
+                    ->label('Nama Pengguna'),
                 TextInput::make('email')
                     ->email()
                     ->required(),
-                DateTimePicker::make('email_verified_at'),
+                // DateTimePicker::make('email_verified_at'),
                 TextInput::make('password')
                     ->password()
                     ->required(),
-            ]);
+            ])
+            ->columns(1);
     }
 
     public static function infolist(Schema $schema): Schema
@@ -70,6 +72,7 @@ class UserResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name')
+                    ->label('Nama Pengguna')
                     ->searchable(),
                 TextColumn::make('email')
                     ->searchable(),
