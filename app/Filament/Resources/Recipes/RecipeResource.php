@@ -11,6 +11,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Repeater\TableColumn;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -69,6 +70,10 @@ class RecipeResource extends Resource
 
 
                 Repeater::make('recipeIngredients')
+                    ->table([
+                        TableColumn::make('Bahan Baku'),
+                        TableColumn::make('Jumlah')
+                    ])
                     ->label('Bahan Baku')
                     ->relationship('recipeIngredients')
                     ->schema([
@@ -81,7 +86,8 @@ class RecipeResource extends Resource
                             ->label('Jumlah')
                             ->numeric()
                             ->step(0.00001)
-                            ->required(),
+                            ->required()
+                            ->placeholder('Jumlah Bahan yang dibutuhkan'),
 
                     ])
                     ->columnSpanFull()

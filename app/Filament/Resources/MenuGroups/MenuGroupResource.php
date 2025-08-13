@@ -18,6 +18,7 @@ use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Repeater\TableColumn;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
@@ -74,6 +75,9 @@ class MenuGroupResource extends Resource
                     ->default(Auth::id()),
 
                 Repeater::make('recipes')
+                    ->table([
+                        TableColumn::make('Menu Masakan')
+                    ])
                     ->relationship()
                     ->columnSpanFull()
                     ->schema([
