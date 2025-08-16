@@ -180,6 +180,15 @@ class MenuGroupResource extends Resource
                     ->preload(),
             ])
             ->recordActions([
+                ViewAction::make()
+                    ->label('')
+                    ->tooltip('Lihat'),
+                EditAction::make()
+                    ->label('')
+                    ->tooltip('Ubah'),
+                DeleteAction::make()
+                    ->label('')
+                    ->tooltip('Hapus'),
                 ActionGroup::make([
                     Action::make('print_pdf')
                         ->label('Cetak PDF')
@@ -195,15 +204,6 @@ class MenuGroupResource extends Resource
                     ->button()
                     ->label('Tindakan')
                     ->icon(Heroicon::PaperClip),
-                ViewAction::make()
-                    ->label('')
-                    ->tooltip('Lihat'),
-                EditAction::make()
-                    ->label('')
-                    ->tooltip('Ubah'),
-                DeleteAction::make()
-                    ->label('')
-                    ->tooltip('Hapus'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

@@ -30,9 +30,9 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->brandName('SPPG Calk')
-            ->brandLogo(asset('img/lg.png'))
-            ->favicon(asset('img/bgn.png'))
-            ->brandLogoHeight('3.5rem')
+            ->brandLogo(asset('img/test.png'))
+            ->favicon(asset('img/fav.png'))
+            ->brandLogoHeight('3.8rem')
             ->login()
             ->darkMode(false)
             ->colors([
