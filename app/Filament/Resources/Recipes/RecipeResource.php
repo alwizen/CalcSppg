@@ -132,7 +132,7 @@ class RecipeResource extends Resource
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    ExportBulkAction::make(),
+                    // ExportBulkAction::make(),
                     DeleteBulkAction::make(),
                 ]),
             ]);
