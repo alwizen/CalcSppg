@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use Filament\Http\Middleware\Authenticate;
+use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -26,6 +27,9 @@ class SupplierPanelProvider extends PanelProvider
         return $panel
             ->id('supplier')
             ->path('supplier')
+            ->brandName('My Supplier')
+            ->authGuard('suppliers')
+            ->login()
             ->colors([
                 'primary' => Color::Amber,
             ])
@@ -49,6 +53,9 @@ class SupplierPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+            ])
+            ->plugins([
+                FilamentShieldPlugin::make(),
             ])
             ->authMiddleware([
                 Authenticate::class,

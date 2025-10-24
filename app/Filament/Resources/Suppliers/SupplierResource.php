@@ -11,10 +11,14 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Toggle;
+use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -28,15 +32,22 @@ class SupplierResource extends Resource
     {
         return $schema
             ->components([
-                TextInput::make('code')
-                    ->required(),
                 TextInput::make('name')
                     ->required(),
-                TextInput::make('telp')
+                TextInput::make('email')
+                    ->email()
+                    ->required(),
+                TextInput::make('password')
+                    ->password()
+                    ->required(),
+                TextInput::make('phone')
                     ->tel()
                     ->default(null),
-                TextInput::make('address')
-                    ->default(null),
+                Textarea::make('address')
+                    ->default(null)
+                    ->columnSpanFull(),
+                Toggle::make('is_active')
+                    ->required(),
             ]);
     }
 
@@ -44,10 +55,11 @@ class SupplierResource extends Resource
     {
         return $schema
             ->components([
-                TextEntry::make('code'),
                 TextEntry::make('name'),
-                TextEntry::make('telp'),
-                TextEntry::make('address'),
+                TextEntry::make('email'),
+                TextEntry::make('phone'),
+                IconEntry::make('is_active')
+                    ->boolean(),
                 TextEntry::make('created_at')
                     ->dateTime(),
                 TextEntry::make('updated_at')
@@ -59,14 +71,14 @@ class SupplierResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('code')
-                    ->searchable(),
                 TextColumn::make('name')
                     ->searchable(),
-                TextColumn::make('telp')
+                TextColumn::make('email')
                     ->searchable(),
-                TextColumn::make('address')
+                TextColumn::make('phone')
                     ->searchable(),
+                IconColumn::make('is_active')
+                    ->boolean(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
