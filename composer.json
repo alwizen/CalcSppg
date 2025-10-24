@@ -8,11 +8,13 @@
     "require": {
         "php": "^8.2",
         "barryvdh/laravel-dompdf": "^3.1",
+        "bezhansalleh/filament-shield": "^4.0",
         "filament/filament": "~4.0",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
         "maatwebsite/excel": "^3.1",
         "pxlrbt/filament-excel": "3.0",
+        "spatie/laravel-permission": "^6.21",
         "swisnl/filament-backgrounds": "^2.0"
     },
     "require-dev": {

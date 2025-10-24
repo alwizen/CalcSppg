@@ -18,6 +18,11 @@ class Ingredient extends Model
         return $this->hasMany(RecipeIngredient::class);
     }
 
+    public function requiredInMenuGroups()
+    {
+        return $this->hasMany(RequiredIngredient::class);
+    }
+
     public function recipes()
     {
         return $this->belongsToMany(Recipe::class, 'recipe_ingredients')
