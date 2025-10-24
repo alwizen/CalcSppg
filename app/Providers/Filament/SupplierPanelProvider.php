@@ -19,6 +19,8 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Swis\Filament\Backgrounds\FilamentBackgroundsPlugin;
+use Swis\Filament\Backgrounds\ImageProviders\MyImages;
 
 class SupplierPanelProvider extends PanelProvider
 {
@@ -27,21 +29,31 @@ class SupplierPanelProvider extends PanelProvider
         return $panel
             ->id('supplier')
             ->path('supplier')
-            ->brandName('My Supplier')
+            ->brandName('Portal Supplier')
+            ->favicon(asset('img/fav.png'))
             ->authGuard('suppliers')
             ->login()
+            ->font('Poppins')
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => '#D1B06C',
             ])
             ->discoverResources(in: app_path('Filament/Supplier/Resources'), for: 'App\Filament\Supplier\Resources')
             ->discoverPages(in: app_path('Filament/Supplier/Pages'), for: 'App\Filament\Supplier\Pages')
-            ->pages([
-                Dashboard::class,
-            ])
+            // ->pages([
+            //     Dashboard::class,
+            // ])
             ->discoverWidgets(in: app_path('Filament/Supplier/Widgets'), for: 'App\Filament\Supplier\Widgets')
             ->widgets([
                 AccountWidget::class,
                 FilamentInfoWidget::class,
+            ])
+            ->plugins([
+                FilamentBackgroundsPlugin::make()
+                    // ->showAttribution(false)
+                    ->imageProvider(
+                        MyImages::make()
+                            ->directory('images/bg/sup')
+                    ),
             ])
             ->middleware([
                 EncryptCookies::class,
