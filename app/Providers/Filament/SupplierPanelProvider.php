@@ -19,6 +19,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Resma\FilamentAwinTheme\FilamentAwinTheme;
 use Swis\Filament\Backgrounds\FilamentBackgroundsPlugin;
 use Swis\Filament\Backgrounds\ImageProviders\MyImages;
 
@@ -34,6 +35,7 @@ class SupplierPanelProvider extends PanelProvider
             ->authGuard('suppliers')
             ->login()
             ->font('Poppins')
+            ->topNavigation()
             ->colors([
                 'primary' => '#D1B06C',
             ])
@@ -48,6 +50,8 @@ class SupplierPanelProvider extends PanelProvider
                 FilamentInfoWidget::class,
             ])
             ->plugins([
+                FilamentAwinTheme::make()
+                    ->primaryColor('#6cd17bff'),
                 FilamentBackgroundsPlugin::make()
                     // ->showAttribution(false)
                     ->imageProvider(

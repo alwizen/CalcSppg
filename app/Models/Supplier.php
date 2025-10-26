@@ -15,6 +15,12 @@ class Supplier extends Authenticatable implements FilamentUser
 
     protected $guard_name = 'suppliers';
 
+    // public function canAccessPanel(Panel $panel): bool
+    // {
+    //     return $this->is_active;
+    // }
+
+
     protected $fillable = [
         'name',
         'email',
