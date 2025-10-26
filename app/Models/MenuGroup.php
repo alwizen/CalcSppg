@@ -14,11 +14,11 @@ class MenuGroup extends Model
         'date' => 'datetime',
     ];
 
-
     public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
     }
+
     public function recipes(): HasMany
     {
         return $this->hasMany(MenuGroupRecipe::class);
@@ -27,6 +27,19 @@ class MenuGroup extends Model
     public function sppg(): BelongsTo
     {
         return $this->belongsTo(Sppg::class);
+    }
+
+    public function allocations(): HasMany
+    {
+        return $this->hasMany(SupplierAllocation::class);
+    }
+
+    // mendapatkan semua ingredients dari menu group
+    public function getAllIngredients()
+    {
+        return Ingredient::whereHas('recipes.menuGroupRecipes', function ($query) {
+            $query->where('menu_group_id', $this->id);
+        })->with('suppliers')->get();
     }
 
     protected static function boot()

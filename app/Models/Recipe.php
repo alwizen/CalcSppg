@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
@@ -38,6 +39,18 @@ class Recipe extends Model
     {
         return $this->belongsToMany(Ingredient::class, 'recipe_ingredients')
             ->withPivot('amount')
+            ->withTimestamps();
+    }
+
+    public function menuGroupRecipes(): HasMany
+    {
+        return $this->hasMany(MenuGroupRecipe::class);
+    }
+
+    // ✅ Tambahkan relasi ke MenuGroup (many-to-many melalui pivot)
+    public function menuGroups(): BelongsToMany
+    {
+        return $this->belongsToMany(MenuGroup::class, 'menu_group_recipes')
             ->withTimestamps();
     }
 }

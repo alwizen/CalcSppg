@@ -5,11 +5,13 @@ namespace App\Filament\Resources\Suppliers;
 use App\Filament\Resources\Suppliers\Pages\ManageSuppliers;
 use App\Models\Supplier;
 use BackedEnum;
+use Dom\Text;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
@@ -48,6 +50,12 @@ class SupplierResource extends Resource
                     ->columnSpanFull(),
                 Toggle::make('is_active')
                     ->required(),
+
+                Select::make('ingredients')
+                    ->label('Ingredients Supplied')
+                    ->multiple()
+                    ->relationship('ingredients', 'name')
+                    ->preload(),
             ]);
     }
 
@@ -72,10 +80,12 @@ class SupplierResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name')
-                    ->searchable(),
+                    ->searchable()
+                    ->label('Nama Supplier'),
                 TextColumn::make('email')
                     ->searchable(),
                 TextColumn::make('phone')
+                    ->label('Telp')
                     ->searchable(),
                 IconColumn::make('is_active')
                     ->boolean(),
@@ -87,6 +97,11 @@ class SupplierResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('ingredients.name')
+                    ->label('Penyediaan Bahan')
+                    ->badge()
+                    ->separator(',')
+                    ->searchable(),
             ])
             ->filters([
                 //
@@ -98,7 +113,7 @@ class SupplierResource extends Resource
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    // DeleteBulkAction::make(),
                 ]),
             ]);
     }

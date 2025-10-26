@@ -11,15 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('required_ingredients', function (Blueprint $table) {
+        Schema::create('ingredient_suppliers', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('menu_group_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('supplier_id')->constrained()->cascadeOnDelete();
             $table->foreignId('ingredient_id')->constrained()->cascadeOnDelete();
-            $table->decimal('required_amount', 14, 3); // contoh: 100.000 kg
-            $table->string('unit', 32);                // sinkron dengan Ingredient.unit
             $table->timestamps();
-
-            $table->unique(['menu_group_id', 'ingredient_id']);
+            $table->unique(['supplier_id', 'ingredient_id']);
         });
     }
 
@@ -28,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('required_ingredients');
+        Schema::dropIfExists('ingredient_suppliers');
     }
 };

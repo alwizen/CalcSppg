@@ -11,30 +11,26 @@ class SupplierAllocation extends Model
         'menu_group_id',
         'ingredient_id',
         'supplier_id',
-        'allocated_amount',
+        'quantity',
         'unit',
-        'price_per_unit',
-        'total_price',
-        'status'
+        'notes',
+        'status', // pending, approved, delivered
     ];
 
-    protected static function booted(): void
-    {
-        static::saving(function (self $m) {
-            if (!is_null($m->price_per_unit)) {
-                $m->total_price = bcmul((string)$m->allocated_amount, (string)$m->price_per_unit, 2);
-            }
-        });
-    }
+    protected $casts = [
+        'quantity' => 'decimal:2',
+    ];
 
     public function menuGroup(): BelongsTo
     {
         return $this->belongsTo(MenuGroup::class);
     }
+
     public function ingredient(): BelongsTo
     {
         return $this->belongsTo(Ingredient::class);
     }
+
     public function supplier(): BelongsTo
     {
         return $this->belongsTo(Supplier::class);

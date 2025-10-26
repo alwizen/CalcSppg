@@ -35,6 +35,11 @@ class Supplier extends Authenticatable implements FilamentUser
         'password' => 'hashed',
     ];
 
+    public function ingredients(): BelongsToMany
+    {
+        return $this->belongsToMany(Ingredient::class, 'ingredient_suppliers');
+    }
+
     // Untuk Filament authentication
     public function canAccessPanel(Panel $panel): bool
     {
