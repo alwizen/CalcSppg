@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use Filafly\Themes\Brisk\BriskTheme;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -18,6 +19,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Resma\FilamentAwinTheme\FilamentAwinTheme;
 use Swis\Filament\Backgrounds\FilamentBackgroundsPlugin;
 use Swis\Filament\Backgrounds\ImageProviders\MyImages;
 
@@ -34,9 +36,10 @@ class AdminPanelProvider extends PanelProvider
             ->favicon(asset('img/fav.png'))
             ->brandLogoHeight('3.8rem')
             ->login()
-            ->darkMode(false)
+            ->viteTheme('resources/css/filament/admin/theme.css')
+            // ->darkMode(false)
             ->colors([
-                'primary' => '#061e48',
+                'primary' => '#D1B06C',
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
@@ -49,6 +52,9 @@ class AdminPanelProvider extends PanelProvider
                 // FilamentInfoWidget::class,
             ])
             ->plugins([
+                BriskTheme::make(),
+                // FilamentAwinTheme::make()
+                //     ->primaryColor('#D1B06C'),
                 FilamentBackgroundsPlugin::make()
                     // ->showAttribution(false)
                     ->imageProvider(
