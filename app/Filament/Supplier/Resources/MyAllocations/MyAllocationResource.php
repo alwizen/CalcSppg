@@ -16,6 +16,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -92,7 +93,8 @@ class MyAllocationResource extends Resource
 
             ])
             ->filters([
-                //
+                SelectFilter::make('menuGroup.sppg.name')
+                    ->label('SPPG')
             ])
             ->recordActions([
                 ActionGroup::make([

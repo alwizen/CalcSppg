@@ -35,6 +35,11 @@ class SppgResource extends Resource
 
     protected static bool $shouldRegisterNavigation = true;
 
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
+
     public static function form(Schema $schema): Schema
     {
         return $schema

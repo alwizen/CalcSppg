@@ -52,4 +52,76 @@ class MenuGroup extends Model
             }
         });
     }
+
+    /**
+     * Ambil semua ingredient ID yang memang dipakai oleh menu group ini (berdasarkan relasi resep).
+     */
+    public function ingredientIdsUsed()
+    {
+        // Mirror cara kamu mem-filter di Resource (recipes.menuGroupRecipes)
+        return \App\Models\Ingredient::query()
+            ->whereHas('recipes.menuGroupRecipes', function ($q) {
+                $q->where('menu_group_id', $this->id);
+            })
+            ->pluck('id');
+    }
+
+    /**
+     * Total kebutuhan ingredient tertentu (hitung dari resep).
+     */
+    public function totalNeededForIngredient(int $ingredientId): float
+    {
+        $this->loadMissing('recipes.recipe.recipeIngredients');
+
+        $requestedPortions = (float) ($this->requested_portions ?? 1);
+        $total = 0.0;
+
+        foreach ($this->recipes as $mgr) {
+            $recipe = $mgr->recipe;
+            $base   = (float) ($recipe->base_portions ?? 1);
+
+            $ri = $recipe->recipeIngredients()
+                ->where('ingredient_id', $ingredientId)
+                ->first();
+
+            if ($ri) {
+                $total += ((float) $ri->amount / max($base, 1.0)) * $requestedPortions;
+            }
+        }
+
+        return $total;
+    }
+
+    /**
+     * Total alokasi yang sudah tercatat untuk ingredient tertentu.
+     */
+    public function allocatedForIngredient(int $ingredientId): float
+    {
+        return (float) \App\Models\SupplierAllocation::query()
+            ->where('menu_group_id', $this->id)
+            ->where('ingredient_id', $ingredientId)
+            ->sum('quantity');
+    }
+
+    /**
+     * Sisa kebutuhan (>= 0).
+     */
+    public function remainingForIngredient(int $ingredientId): float
+    {
+        $remaining = $this->totalNeededForIngredient($ingredientId) - $this->allocatedForIngredient($ingredientId);
+        return $remaining > 0 ? $remaining : 0.0;
+    }
+
+    /**
+     * Apakah masih ada minimal satu ingredient dengan remaining > 0?
+     */
+    public function hasRemainingAny(): bool
+    {
+        foreach ($this->ingredientIdsUsed() as $iid) {
+            if ($this->remainingForIngredient((int) $iid) > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

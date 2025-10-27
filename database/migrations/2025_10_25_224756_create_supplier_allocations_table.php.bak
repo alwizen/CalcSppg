@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('ingredient_id')->constrained('ingredients')->onDelete('cascade');
             $table->foreignId('supplier_id')->constrained('suppliers')->onDelete('cascade');
             $table->decimal('quantity', 10, 2);
-            $table->string('unit')->nullable();
+            $table->decimal('price', 12, 2);
             $table->text('notes')->nullable();
             $table->enum('status', ['pending', 'approved', 'delivered'])->default('pending');
             $table->timestamps();

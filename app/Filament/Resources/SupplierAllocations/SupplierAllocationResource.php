@@ -27,7 +27,9 @@ class SupplierAllocationResource extends Resource
 {
     protected static ?string $model = SupplierAllocation::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static ?string $navigationLabel = 'Distribusi Supplier';
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTruck;
 
     public static function form(Schema $schema): Schema
     {
@@ -35,11 +37,19 @@ class SupplierAllocationResource extends Resource
             ->components([
                 Select::make('menu_group_id')
                     ->label('Menu Group')
-                    ->relationship('menuGroup', 'name')
+                    ->options(function () {
+                        return \App\Models\MenuGroup::query()
+                            ->with(['recipes.recipe.recipeIngredients']) // untuk efisiensi perhitungan needed
+                            ->get()
+                            ->filter(fn($mg) => $mg->hasRemainingAny())
+                            ->pluck('name', 'id')
+                            ->all();
+                    })
                     ->required()
                     ->reactive()
                     ->afterStateUpdated(fn(callable $set) => $set('ingredient_id', null)),
 
+                // Select Ingredient: hanya ingredient yang dipakai di menu group TERPILIH dan remaining > 0
                 Select::make('ingredient_id')
                     ->label('Ingredient')
                     ->options(function (callable $get) {
@@ -48,9 +58,23 @@ class SupplierAllocationResource extends Resource
                             return [];
                         }
 
-                        return Ingredient::whereHas('recipes.menuGroupRecipes', function ($query) use ($menuGroupId) {
-                            $query->where('menu_group_id', $menuGroupId);
-                        })->pluck('name', 'id');
+                        $mg = \App\Models\MenuGroup::find($menuGroupId);
+                        if (!$mg) {
+                            return [];
+                        }
+
+                        // Ingredient yang memang dipakai oleh menu group ini
+                        $ingredientIds = \App\Models\Ingredient::query()
+                            ->whereHas('recipes.menuGroupRecipes', fn($q) => $q->where('menu_group_id', $menuGroupId))
+                            ->pluck('id');
+
+                        // Filter hanya yang remaining > 0
+                        $keepIds = $ingredientIds->filter(fn($iid) => $mg->remainingForIngredient((int) $iid) > 0);
+
+                        return \App\Models\Ingredient::query()
+                            ->whereIn('id', $keepIds)
+                            ->pluck('name', 'id')
+                            ->all();
                     })
                     ->required()
                     ->reactive()
@@ -63,25 +87,32 @@ class SupplierAllocationResource extends Resource
                         $ingredientId = $get('ingredient_id');
                         if (!$ingredientId) return [];
 
-                        return Supplier::whereHas('ingredients', fn($q) => $q->where('ingredient_id', $ingredientId))
+                        // pakai relasi Supplier::whereHas('ingredients') yang ujungnya ke ingredient_suppliers
+                        return \App\Models\Supplier::whereHas('ingredients', fn($q) => $q->where('ingredient_id', $ingredientId))
                             ->where('is_active', true)
                             ->pluck('name', 'id');
+                    })
+                    ->disabled(function (callable $get) {
+                        $mgId = $get('menu_group_id');
+                        $ing  = $get('ingredient_id');
+                        if (!$mgId || !$ing) return true;
+
+                        $mg = \App\Models\MenuGroup::find($mgId);
+                        return !$mg || $mg->remainingForIngredient((int) $ing) <= 0;
                     })
                     ->required()
                     ->searchable()
                     ->helperText('Only suppliers who provide this ingredient')
-
-                    // ⬇️ Cegah duplikasi supplier untuk kombinasi (menu_group_id, ingredient_id)
                     ->unique(
-                        ignoreRecord: true,                 // saat edit: abaikan dirinya sendiri
+                        ignoreRecord: true,
                         column: 'supplier_id',
                         modifyRuleUsing: function (\Illuminate\Validation\Rules\Unique $rule, $get) {
-                            // ❗ Jangan panggil ->table(), cukup tambahkan where-where pembatas
                             return $rule
                                 ->where('menu_group_id', $get('menu_group_id'))
                                 ->where('ingredient_id',  $get('ingredient_id'));
                         },
                     ),
+
                 TextInput::make('quantity')
                     ->label('Quantity to Allocate')
                     ->required()
@@ -211,16 +242,18 @@ class SupplierAllocationResource extends Resource
         return $schema
             ->components([
                 TextColumn::make('menuGroup.name')
-                    ->label('Menu Group')
+                    ->label('Nama Menu')
                     ->searchable()
                     ->sortable(),
 
                 TextColumn::make('ingredient.name')
                     ->searchable()
+                    ->label('Bahan Baku')
                     ->sortable(),
 
                 TextColumn::make('supplier.name')
                     ->searchable()
+                    ->label('Supplier')
                     ->sortable(),
 
                 TextColumn::make('menuGroup.allocations.date')
@@ -246,6 +279,7 @@ class SupplierAllocationResource extends Resource
 
                 TextColumn::make('ingredient.name')
                     ->searchable()
+                    ->label('Bahan Baku')
                     ->sortable(),
 
                 TextColumn::make('supplier.name')
@@ -257,9 +291,19 @@ class SupplierAllocationResource extends Resource
                     ->searchable()
                     ->sortable(),
 
+                TextColumn::make('status')
+                    ->label('SPPG')
+                    ->searchable()
+                    ->badge()
+                    ->sortable(),
 
                 TextColumn::make('quantity')
-                    ->formatStateUsing(fn($record) => $record->quantity . ' ' . $record->unit),
+                    ->label('Qty')
+                    ->formatStateUsing(
+                        fn($state, $record) =>
+                        rtrim(rtrim(number_format((float) $state, 2, '.', ''), '0'), '.') . ' ' .
+                            ($record->ingredient?->unit ?? $record->unit)
+                    ),
             ])
             ->filters([
                 //
@@ -280,7 +324,6 @@ class SupplierAllocationResource extends Resource
     {
         return [
             'index' => Pages\ManageSupplierAllocations::route('/'),
-            // 'bulk-allocate' => Pages\BulkAllocateSupplierAllocations::route('/bulk-allocate'),
         ];
     }
 }

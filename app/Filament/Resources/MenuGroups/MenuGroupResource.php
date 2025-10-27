@@ -38,7 +38,7 @@ class MenuGroupResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCalculator;
 
-    protected static ?string $navigationLabel = "Hitung Kebutuhan";
+    protected static ?string $navigationLabel = "Kebutuhan SPPG";
 
     protected static ?string $label = "Hitung Kebutuhan Dapur";
 
