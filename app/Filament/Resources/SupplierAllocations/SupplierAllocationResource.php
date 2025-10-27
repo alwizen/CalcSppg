@@ -199,7 +199,6 @@ class SupplierAllocationResource extends Resource
                                     $fail('Total allocation already exceeds the needed amount. Please adjust existing allocations.');
                                     return;
                                 }
-
                             };
                         },
                     ])
@@ -224,6 +223,9 @@ class SupplierAllocationResource extends Resource
                     ->searchable()
                     ->sortable(),
 
+                TextColumn::make('menuGroup.allocations.date')
+                    ->label('tanggal'),
+
                 TextColumn::make('quantity')
                     ->formatStateUsing(fn($record) => $record->quantity . ' ' . $record->unit),
             ]);
@@ -233,6 +235,10 @@ class SupplierAllocationResource extends Resource
     {
         return $table
             ->columns([
+                TextColumn::make('menuGroup.date')
+                    ->date()
+                    ->label('Tanggal'),
+
                 TextColumn::make('menuGroup.name')
                     ->label('Menu Group')
                     ->searchable()
@@ -245,6 +251,12 @@ class SupplierAllocationResource extends Resource
                 TextColumn::make('supplier.name')
                     ->searchable()
                     ->sortable(),
+
+                TextColumn::make('menuGroup.sppg.name')
+                    ->label('SPPG')
+                    ->searchable()
+                    ->sortable(),
+
 
                 TextColumn::make('quantity')
                     ->formatStateUsing(fn($record) => $record->quantity . ' ' . $record->unit),

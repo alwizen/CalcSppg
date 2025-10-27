@@ -5,6 +5,7 @@ namespace App\Filament\Supplier\Resources\MyAllocations;
 use App\Filament\Supplier\Resources\MyAllocations\Pages\ManageMyAllocations;
 use App\Models\SupplierAllocation;
 use BackedEnum;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -22,7 +23,9 @@ class MyAllocationResource extends Resource
 {
     protected static ?string $model = SupplierAllocation::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static ?string $navigationLabel = 'My Order';
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTruck;
 
     public static function getEloquentQuery(): Builder
     {
@@ -52,6 +55,12 @@ class MyAllocationResource extends Resource
     {
         return $table
             ->columns([
+                TextColumn::make('menuGroup.date')
+                    ->label('Tanggal')
+                    ->date()
+                    ->searchable()
+                    ->sortable(),
+
                 TextColumn::make('menuGroup.name')
                     ->label('Menu Group')
                     ->searchable()
@@ -65,17 +74,32 @@ class MyAllocationResource extends Resource
                     ->searchable()
                     ->sortable(),
 
+                TextColumn::make('menuGroup.sppg.name')
+                    ->label('SPPG')
+                    ->searchable()
+                    ->sortable(),
+
                 TextColumn::make('quantity')
-                    ->formatStateUsing(fn($record) => $record->quantity . ' ' . $record->unit),
+                    ->label('Qty')
+                    ->formatStateUsing(
+                        fn($state, $record) =>
+                        rtrim(rtrim(number_format((float) $state, 2, '.', ''), '0'), '.') . ' ' .
+                            ($record->ingredient?->unit ?? $record->unit)
+                    ),
+
+                TextColumn::make('status')
+                    ->badge()
 
             ])
             ->filters([
                 //
             ])
             ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
-                DeleteAction::make(),
+                ActionGroup::make([
+                    ViewAction::make(),
+                    EditAction::make(),
+                    DeleteAction::make(),
+                ])
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

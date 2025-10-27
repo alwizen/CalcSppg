@@ -37,7 +37,7 @@ class SupplierPanelProvider extends PanelProvider
             ->font('Poppins')
             ->topNavigation()
             ->colors([
-                'primary' => '#D1B06C',
+                'primary' => '#8839ef',
             ])
             ->discoverResources(in: app_path('Filament/Supplier/Resources'), for: 'App\Filament\Supplier\Resources')
             ->discoverPages(in: app_path('Filament/Supplier/Pages'), for: 'App\Filament\Supplier\Pages')
@@ -51,7 +51,7 @@ class SupplierPanelProvider extends PanelProvider
             ])
             ->plugins([
                 FilamentAwinTheme::make()
-                    ->primaryColor('#6cd17bff'),
+                    ->primaryColor('#8839ef'),
                 FilamentBackgroundsPlugin::make()
                     // ->showAttribution(false)
                     ->imageProvider(

@@ -31,6 +31,11 @@ class SupplierAllocation extends Model
         return $this->belongsTo(Ingredient::class);
     }
 
+    public function sppg(): BelongsTo
+    {
+        return $this->belongsTo(Sppg::class);
+    }
+
     public function supplier(): BelongsTo
     {
         return $this->belongsTo(Supplier::class);
